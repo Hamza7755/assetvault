@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AssetVault — IT Asset Management</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Space Grotesk','sans-serif'],body:['DM Sans','sans-serif']},colors:{bg:'#0c0e12',surface:'#13161c',card:'#191d26',border:'#262b37',muted:'#6b7280',fg:'#e5e7eb',accent:'#e8a630',accentHover:'#f0b840',danger:'#ef4444',success:'#22c55e',info:'#38bdf8'}}}}
+</script>
+<style>
+:root{--bg:#0c0e12;--surface:#13161c;--card:#191d26;--border:#262b37;--muted:#6b7280;--fg:#e5e7eb;--accent:#e8a630;--accent-hover:#f0b840}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-30%;right:-15%;width:600px;height:600px;background:radial-gradient(circle,rgba(232,166,48,.06)0%,transparent 70%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;bottom:-20%;left:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(56,189,248,.04)0%,transparent 70%);pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--surface)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:8px;color:var(--muted);font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
+.sidebar-link:hover{color:var(--fg);background:rgba(255,255,255,.04)}
+.sidebar-link.active{color:var(--accent);background:rgba(232,166,48,.08)}
+.sidebar-link i{width:20px;text-align:center;font-size:15px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
+.stat-card:hover{transform:translateY(-2px);border-color:rgba(232,166,48,.3)}
+.stat-card::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;filter:blur(40px);opacity:.15;pointer-events:none}
+.stat-card.gold::after{background:#e8a630}.stat-card.blue::after{background:#38bdf8}.stat-card.green::after{background:#22c55e}.stat-card.red::after{background:#ef4444}.stat-card.purple::after{background:#a855f7}
+.asset-table{width:100%;border-collapse:separate;border-spacing:0}
+.asset-table thead th{background:var(--surface);padding:11px 13px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;cursor:pointer;user-select:none;transition:color .2s;white-space:nowrap}
+.asset-table thead th:hover{color:var(--fg)}
+.asset-table tbody tr{transition:background .15s;border-bottom:1px solid rgba(38,43,55,.5)}
+.asset-table tbody tr:hover{background:rgba(232,166,48,.03)}
+.asset-table tbody td{padding:11px 13px;font-size:13px;vertical-align:middle}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-laptop{background:rgba(232,166,48,.12);color:#e8a630}.badge-desktop{background:rgba(56,189,248,.12);color:#38bdf8}
+.badge-workstation{background:rgba(249,115,22,.12);color:#f97316}.badge-monitor{background:rgba(168,85,247,.12);color:#a855f7}
+.badge-printer{background:rgba(34,197,94,.12);color:#22c55e}.badge-server{background:rgba(239,68,68,.12);color:#ef4444}
+.badge-network{background:rgba(251,191,36,.12);color:#fbbf24}.badge-phone{background:rgba(236,72,153,.12);color:#ec4899}
+.badge-other{background:rgba(107,114,128,.12);color:#9ca3af}
+.cond-new{background:rgba(34,197,94,.12);color:#22c55e}.cond-excellent{background:rgba(56,189,248,.12);color:#38bdf8}
+.cond-good{background:rgba(20,184,166,.12);color:#14b8a6}.cond-fair{background:rgba(234,179,8,.12);color:#eab308}
+.cond-poor{background:rgba(249,115,22,.12);color:#f97316}.cond-oos{background:rgba(239,68,68,.12);color:#ef4444}
+.btn-primary{background:var(--accent);color:#0c0e12;font-weight:600;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:14px;transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 20px rgba(232,166,48,.25)}
+.btn-ghost{background:transparent;color:var(--muted);font-weight:500;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-size:13px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-ghost:hover{color:var(--fg);background:rgba(255,255,255,.06)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:6px}
+.btn-danger-outline{background:transparent;border:1px solid rgba(239,68,68,.3);color:#ef4444;font-weight:500;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
+.btn-danger-outline:hover{border-color:#ef4444;background:rgba(239,68,68,.08)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;opacity:0;pointer-events:none;transition:opacity .25s;overflow-y:auto}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-content{background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:720px;transform:translateY(20px) scale(.97);transition:transform .3s cubic-bezier(.4,0,.2,1);margin:auto 0}
+.modal-overlay.open .modal-content{transform:translateY(0) scale(1)}
+.form-group{margin-bottom:13px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.form-label .required{color:#ef4444;margin-left:2px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--fg);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,166,48,.12)}
+.form-input::placeholder,.form-textarea::placeholder{color:#3d4250}
+.form-select option{background:var(--card);color:var(--fg)}
+.form-textarea{resize:vertical;min-height:56px}
+.form-error{font-size:12px;color:#ef4444;margin-top:3px;display:none}
+.form-error.show{display:block}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:pointer}
+.section-title{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.toast-container{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:toastIn .35s cubic-bezier(.4,0,.2,1);min-width:280px}
+.toast.out{animation:toastOut .3s forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+.search-box{position:relative}.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}.search-box input{padding-left:40px}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:150;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.open{opacity:1;pointer-events:all}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}.empty-state i{font-size:48px;margin-bottom:16px;opacity:.3}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+@keyframes fadeInRow{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in-row{animation:fadeInRow .3s ease forwards}
+@keyframes highlightNew{0%{background:rgba(232,166,48,.15)}100%{background:transparent}}
+.highlight-new{animation:highlightNew 2.5s ease forwards}
+.sidebar-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:50;background:var(--accent);color:#0c0e12;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 20px rgba(232,166,48,.3)}
+@media(max-width:1024px){.sidebar{position:fixed;left:0;top:0;z-index:60;transform:translateX(-100%);height:100vh}.sidebar.open{transform:translateX(0)}.sidebar-toggle{display:flex;align-items:center;justify-content:center}.main-content{margin-left:0!important}}
+.row-actions{display:flex;gap:3px}
+.row-action-btn{width:30px;height:30px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.row-action-btn:hover{background:rgba(255,255,255,.06);color:var(--fg)}
+.row-action-btn.delete:hover{background:rgba(239,68,68,.1);color:#ef4444}
+.row-action-btn.view:hover{background:rgba(56,189,248,.1);color:#38bdf8}
+.detail-modal-content{max-width:600px}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spec-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px}
+.spec-item-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.spec-item-value{font-size:13px;color:var(--fg);font-weight:500;word-break:break-word}
+.new-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(232,166,48,.15);color:#e8a630;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em;animation:pulse 1.5s infinite}
+.warranty-warn{color:#f97316}.warranty-expired{color:#ef4444}.warranty-ok{color:#22c55e}
+.storage-banner{border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.storage-banner i{font-size:18px;flex-shrink:0}
+.storage-banner p{font-size:13px;flex:1}
+.storage-banner.warn{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2)}
+.storage-banner.warn i{color:#eab308}.storage-banner.warn p{color:#fbbf24}
+.storage-banner.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)}
+.storage-banner.err i{color:#ef4444}.storage-banner.err p{color:#f87171}
+.list-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid rgba(38,43,55,.3);transition:background .15s}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:rgba(232,166,48,.02)}
+.list-item-text{font-size:14px;color:var(--fg);display:flex;align-items:center;gap:10px}
+.list-item-text i{color:var(--muted);font-size:13px;width:18px;text-align:center}
+.list-item-count{font-size:11px;color:var(--muted);background:var(--surface);padding:2px 8px;border-radius:10px}
+.list-delete-btn{width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;flex-shrink:0}
+.list-delete-btn:hover{background:rgba(239,68,68,.1);color:#ef4444}
+.list-add-row{padding:16px 24px;display:flex;gap:10px}
+.list-empty{padding:30px 24px;text-align:center;color:var(--muted);font-size:13px}
+@keyframes itemIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.list-item-new{animation:itemIn .3s ease}
+</style>
+</head>
+<body>
+<div class="toast-container" id="toastContainer"></div>
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+
+<aside class="sidebar fixed top-0 left-0 h-screen w-[240px] flex flex-col py-6 px-4" id="sidebar">
+  <div class="flex items-center gap-3 px-4 mb-8"><div class="w-9 h-9 rounded-lg bg-accent flex items-center justify-center"><i class="fas fa-vault text-bg text-sm"></i></div><div><h1 class="font-heading font-bold text-fg text-base leading-tight">AssetVault</h1><p class="text-[11px] text-muted font-medium tracking-wider uppercase">IT Management</p></div></div>
+  <nav class="flex flex-col gap-1 flex-1">
+    <div class="sidebar-link active" data-view="dashboard" onclick="switchView('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
+    <div class="sidebar-link" data-view="assets" onclick="switchView('assets')"><i class="fas fa-server"></i> All Assets</div>
+    <div class="sidebar-link" data-view="lists" onclick="switchView('lists')"><i class="fas fa-list-ul"></i> Manage Lists</div>
+    <div class="sidebar-link" data-view="add" onclick="openAddModal()"><i class="fas fa-plus-circle"></i> Add Asset</div>
+  </nav>
+  <div class="mt-auto pt-4 border-t border-border px-2">
+    <button class="btn-danger-outline w-full justify-center mb-3" onclick="confirmResetData()"><i class="fas fa-trash-restore text-xs"></i> Reset All Data</button>
+    <div class="flex items-center gap-3 px-3 py-2"><div class="pulse-dot"></div><span class="text-xs text-muted">System Online</span></div>
+    <p class="text-[11px] text-muted px-3 mt-1 opacity-60">v3.5.0</p>
+  </div>
+</aside>
+
+<main class="main-content ml-[240px] min-h-screen relative z-10">
+  <div id="storageBanner" style="display:none" class="p-6 lg:px-8 pt-6"></div>
+
+  <!-- Dashboard -->
+  <section id="dashboardView" class="p-6 lg:p-8">
+    <header class="mb-8"><h2 class="font-heading text-2xl font-bold text-fg">Dashboard</h2><p class="text-muted text-sm mt-1">Overview of your IT asset inventory</p></header>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8" id="statsGrid"></div>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden"><div class="flex items-center justify-between px-6 py-4 border-b border-border"><h3 class="font-heading font-semibold text-fg text-base">Recently Added Assets</h3><button class="btn-outline text-xs" onclick="switchView('assets')">View All <i class="fas fa-arrow-right text-[10px]"></i></button></div><div class="overflow-x-auto" id="recentTableWrap"></div></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6"><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4">Assets by Type</h3><div id="typeDistribution"></div></div><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4">Assets by Location</h3><div id="locationDistribution"></div></div><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4">Condition Overview</h3><div id="conditionDistribution"></div></div></div>
+  </section>
+
+  <!-- Assets List -->
+  <section id="assetsView" class="p-6 lg:p-8 hidden">
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div><h2 class="font-heading text-2xl font-bold text-fg">All Assets</h2><p class="text-muted text-sm mt-1" id="assetCountLabel">0 assets</p></div>
+      <div class="flex items-center gap-3 flex-wrap"><button class="btn-outline" onclick="exportCSV()"><i class="fas fa-download text-xs"></i> Export CSV</button><button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus text-xs"></i> Add Asset</button></div>
+    </header>
+    <div class="flex flex-col sm:flex-row gap-3 mb-5 flex-wrap">
+      <div class="search-box flex-1 min-w-[200px]"><i class="fas fa-search"></i><input type="text" class="form-input" placeholder="Search..." id="searchInput" oninput="renderAssets()"></div>
+      <select class="form-select sm:w-[140px]" id="filterType" onchange="renderAssets()"><option value="">All Types</option><option value="Laptop">Laptop</option><option value="Desktop">Desktop</option><option value="Workstation">Workstation</option><option value="Monitor">Monitor</option><option value="Printer">Printer</option><option value="Server">Server</option><option value="Network Equipment">Network Equipment</option><option value="Phone">Phone</option><option value="Other">Other</option></select>
+      <select class="form-select sm:w-[140px]" id="filterCondition" onchange="renderAssets()"><option value="">All Conditions</option><option value="New">New</option><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option><option value="Poor">Poor</option><option value="Out of Service">Out of Service</option></select>
+      <select class="form-select sm:w-[160px]" id="filterDept" onchange="renderAssets()"><option value="">All Departments</option></select>
+      <select class="form-select sm:w-[160px]" id="filterLocation" onchange="renderAssets()"><option value="">All Locations</option></select>
+    </div>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden"><div class="overflow-x-auto" style="max-height:calc(100vh - 300px);overflow-y:auto" id="assetTableWrap"></div></div>
+  </section>
+
+  <!-- Manage Lists -->
+  <section id="listsView" class="p-6 lg:p-8 hidden">
+    <header class="mb-8"><h2 class="font-heading text-2xl font-bold text-fg">Manage Lists</h2><p class="text-muted text-sm mt-1">Add departments, locations, and employees/offices. These appear as suggestions when adding assets.</p></header>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-info/10 flex items-center justify-center"><i class="fas fa-building text-info text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base">Departments</h3><span class="list-item-count" id="deptCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newDeptInput" placeholder="e.g. Marketing" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('departments')}"><button class="btn-primary btn-sm" onclick="addListItem('departments')"><i class="fas fa-plus text-xs"></i></button></div><div id="deptList"></div></div>
+      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center"><i class="fas fa-map-marker-alt text-success text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base">Locations / Branches</h3><span class="list-item-count" id="locCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newLocInput" placeholder="e.g. London Office" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('locations')}"><button class="btn-primary btn-sm" onclick="addListItem('locations')"><i class="fas fa-plus text-xs"></i></button></div><div id="locList"></div></div>
+      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center"><i class="fas fa-users text-accent text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base">Employees / Offices</h3><span class="list-item-count" id="empCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newEmpInput" placeholder="e.g. John Smith" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('employees')}"><button class="btn-primary btn-sm" onclick="addListItem('employees')"><i class="fas fa-plus text-xs"></i></button></div><div id="empList"></div></div>
+    </div>
+  </section>
+</main>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="assetModal">
+  <div class="modal-content">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg" id="modalTitle">Add New Asset</h3><button class="btn-ghost" onclick="closeModal()" aria-label="Close"><i class="fas fa-times"></i></button></div>
+    <form id="assetForm" class="px-6 py-5" onsubmit="handleFormSubmit(event)">
+      <input type="hidden" id="editId" value="">
+      <div class="section-title">General Information</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fCode">Asset Code <span class="required">*</span></label><input type="text" class="form-input" id="fCode" placeholder="e.g. IT-2024-0001"><div class="form-error" id="fCodeErr">Asset code is required</div></div>
+        <div class="form-group"><label class="form-label" for="fName">Asset Name</label><input type="text" class="form-input" id="fName" placeholder="e.g. Dell Latitude 5540"></div>
+        <div class="form-group"><label class="form-label" for="fType">Type</label><input type="text" class="form-input" id="fType" placeholder="Search or type custom..." list="dlType" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fSerial">Serial Number</label><input type="text" class="form-input" id="fSerial" placeholder="e.g. SN-2024-00123"><div class="form-error" id="fSerialErr">This serial number already exists</div></div>
+      </div>
+      <div class="section-title mt-4">Assignment & Location</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fLocation">Location / Branch</label><input type="text" class="form-input" id="fLocation" placeholder="Select or type..." list="dlLocation" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fDepartment">Department</label><input type="text" class="form-input" id="fDepartment" placeholder="Select or type..." list="dlDepartment" autocomplete="off"></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="fAssigned">Assigned To</label><input type="text" class="form-input" id="fAssigned" placeholder="Select or type..." list="dlEmployee" autocomplete="off"></div>
+      <div class="section-title mt-4">Financial & Status</div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fCondition">Condition</label><select class="form-select" id="fCondition"><option value=""></option><option value="New">New</option><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option><option value="Poor">Poor</option><option value="Out of Service">Out of Service</option></select></div>
+        <div class="form-group"><label class="form-label" for="fCost">Purchase Cost ($)</label><input type="number" step="0.01" min="0" class="form-input" id="fCost" placeholder="e.g. 1299.99"></div>
+        <div class="form-group"><label class="form-label" for="fPurchaseDate">Purchase Date</label><input type="date" class="form-input" id="fPurchaseDate" onchange="updateAgePreview()"></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fWarranty">Warranty Expiry</label><input type="date" class="form-input" id="fWarranty"></div>
+        <div class="form-group"><label class="form-label">Asset Age</label><div class="form-input flex items-center gap-2" style="cursor:default;background:var(--surface)"><i class="fas fa-clock text-muted text-xs"></i><span class="text-sm" id="ageText" style="color:var(--muted)">Set purchase date to calculate</span></div></div>
+      </div>
+      <div class="section-title mt-4">Hardware Specifications</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fManufacturer">Manufacturer</label><input type="text" class="form-input" id="fManufacturer" placeholder="Search or type..." list="dlManufacturer" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fModel">Model</label><input type="text" class="form-input" id="fModel" placeholder="e.g. Latitude 5540" list="dlModel" autocomplete="off"></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="fProcessor">Processor (CPU)</label><input type="text" class="form-input" id="fProcessor" placeholder="Search or type..." list="dlProcessor" autocomplete="off"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fRAM">RAM</label><input type="text" class="form-input" id="fRAM" placeholder="e.g. 32GB DDR5-4800" list="dlRAM" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fGPU">Graphics Card (GPU)</label><input type="text" class="form-input" id="fGPU" placeholder="Search or type..." list="dlGPU" autocomplete="off"></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+        <div class="form-group"><label class="form-label" for="fSSD">SSD Storage</label><input type="text" class="form-input" id="fSSD" placeholder="e.g. 512GB NVMe" list="dlSSD" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fHDD">HDD Storage</label><input type="text" class="form-input" id="fHDD" placeholder="e.g. 1TB 7200RPM" list="dlHDD" autocomplete="off"></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="fMAC">MAC Address</label><input type="text" class="form-input" id="fMAC" placeholder="e.g. AA:BB:CC:DD:EE:FF"><div class="form-error" id="fMACErr">This MAC address already exists</div></div>
+      <div class="form-group"><label class="form-label" for="fSpecs">Additional Specifications</label><textarea class="form-textarea" id="fSpecs" placeholder="Any extra specs..." rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label" for="fNotes">Notes</label><textarea class="form-textarea" id="fNotes" placeholder="Repair history, comments..." rows="2"></textarea></div>
+      <div class="flex justify-end gap-3 pt-3 pb-1"><button type="button" class="btn-outline" onclick="closeModal()">Cancel</button><button type="submit" class="btn-primary" id="submitBtn"><i class="fas fa-check text-xs"></i> Save Asset</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Detail View Modal -->
+<div class="modal-overlay" id="detailModal"><div class="modal-content detail-modal-content"><div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg" id="detailTitle">Asset Details</h3><button class="btn-ghost" onclick="closeDetail()" aria-label="Close"><i class="fas fa-times"></i></button></div><div class="px-6 py-5" id="detailBody"></div></div></div>
+
+<!-- Delete / Reset Confirmation -->
+<div class="confirm-overlay" id="confirmModal"><div class="bg-card border border-border rounded-2xl p-6 w-[95%] max-w-[400px] text-center" style="transform:scale(.95);transition:transform .25s" id="confirmBox"><div class="w-14 h-14 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4"><i class="fas fa-trash-alt text-danger text-xl"></i></div><h4 class="font-heading font-bold text-fg text-lg mb-2" id="confirmTitle">Delete</h4><p class="text-muted text-sm mb-6" id="confirmText"></p><div class="flex justify-center gap-3"><button class="btn-outline" onclick="closeConfirm()">Cancel</button><button class="btn-primary" style="background:#ef4444" id="confirmDeleteBtn" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><i class="fas fa-trash text-xs"></i> Delete</button></div></div></div>
+
+<!-- Datalist elements populated by JS -->
+<datalist id="dlType"></datalist>
+<datalist id="dlManufacturer"></datalist>
+<datalist id="dlModel"></datalist>
+<datalist id="dlProcessor"></datalist>
+<datalist id="dlGPU"></datalist>
+<datalist id="dlRAM"></datalist>
+<datalist id="dlSSD"></datalist>
+<datalist id="dlHDD"></datalist>
+<datalist id="dlLocation"></datalist>
+<datalist id="dlDepartment"></datalist>
+<datalist id="dlEmployee"></datalist>
+
+<script>
+// ============================================================
+//  STORAGE ABSTRACTION — localStorage with in-memory fallback
+// ============================================================
+// This solves the "Storage blocked" error that occurs when
+// opening the file directly (file:// protocol) in modern
+// browsers, which block localStorage for security reasons.
+// When localStorage is unavailable, data is held in memory
+// and the app works fully — it just won't persist after reload.
+// ============================================================
+var _memStore = {};
+var _localStorageAvailable = null; // null = not yet tested
+
+function _testLocalStorage() {
+  if (_localStorageAvailable !== null) return _localStorageAvailable;
+  try {
+    var testKey = '__av_test_' + Date.now();
+    localStorage.setItem(testKey, '1');
+    localStorage.removeItem(testKey);
+    _localStorageAvailable = true;
+  } catch (e) {
+    _localStorageAvailable = false;
+  }
+  return _localStorageAvailable;
+}
+
+function storeGet(key) {
+  if (_testLocalStorage()) {
+    try { return localStorage.getItem(key); }
+    catch (e) { /* fall through to memory */ }
+  }
+  return _memStore.hasOwnProperty(key) ? _memStore[key] : null;
+}
+
+function storeSet(key, value) {
+  if (_testLocalStorage()) {
+    try { localStorage.setItem(key, value); return; }
+    catch (e) { /* fall through to memory */ }
+  }
+  _memStore[key] = value;
+}
+
+function storeRemove(key) {
+  if (_testLocalStorage()) {
+    try { localStorage.removeItem(key); return; }
+    catch (e) { /* fall through to memory */ }
+  }
+  delete _memStore[key];
+}
+
+function storeClear(keys) {
+  for (var i = 0; i < keys.length; i++) storeRemove(keys[i]);
+}
+
+function isPersistenceAvailable() {
+  return _testLocalStorage();
+}
+
+// ============================================================
+//  CONSTANTS & PRESETS
+// ============================================================
+var STORAGE_KEY = 'assetvault_v12';
+var LISTS_KEY = 'assetvault_lists_v12';
+var HISTORY_KEY = 'assetvault_history_v12';
+
+var COND_CLS = {New:'cond-new',Excellent:'cond-excellent',Good:'cond-good',Fair:'cond-fair',Poor:'cond-poor','Out of Service':'cond-oos'};
+var COND_ICO = {New:'fa-star',Excellent:'fa-thumbs-up',Good:'fa-check-circle',Fair:'fa-exclamation-circle',Poor:'fa-exclamation-triangle','Out of Service':'fa-ban'};
+var TYPE_CLS = {Laptop:'badge-laptop',Desktop:'badge-desktop',Workstation:'badge-workstation',Monitor:'badge-monitor',Printer:'badge-printer',Server:'badge-server','Network Equipment':'badge-network',Phone:'badge-phone',Other:'badge-other'};
+var TYPE_ICO = {Laptop:'fa-laptop',Desktop:'fa-desktop',Workstation:'fa-microchip',Monitor:'fa-tv',Printer:'fa-print',Server:'fa-server','Network Equipment':'fa-network-wired',Phone:'fa-mobile-alt',Other:'fa-cube'};
+var BAR_COLORS = {Laptop:'#e8a630',Desktop:'#38bdf8',Workstation:'#f97316',Monitor:'#a855f7',Printer:'#22c55e',Server:'#ef4444','Network Equipment':'#fbbf24',Phone:'#ec4899',Other:'#6b7280'};
+var COND_COLORS = {New:'#22c55e',Excellent:'#38bdf8',Good:'#14b8a6',Fair:'#eab308',Poor:'#f97316','Out of Service':'#ef4444'};
+var LIST_ICONS = {departments:'fa-building',locations:'fa-map-marker-alt',employees:'fa-user'};
+
+// Mapping: datalist ID -> {field: form input ID, hwProp: hardware object key (null for non-hw)}
+var DL_MAP = {
+  dlType:        {field:'fType',        hwProp:null},
+  dlManufacturer:{field:'fManufacturer', hwProp:'manufacturer'},
+  dlModel:       {field:'fModel',       hwProp:'model'},
+  dlProcessor:   {field:'fProcessor',   hwProp:'processor'},
+  dlGPU:         {field:'fGPU',         hwProp:'gpu'},
+  dlRAM:         {field:'fRAM',         hwProp:'ram'},
+  dlSSD:         {field:'fSSD',         hwProp:'ssd'},
+  dlHDD:         {field:'fHDD',         hwProp:'hdd'},
+  dlLocation:    {field:'fLocation',    hwProp:null},
+  dlDepartment:  {field:'fDepartment',  hwProp:null},
+  dlEmployee:    {field:'fAssigned',    hwProp:null}
+};
+
+var TYPE_PRESETS = ['Laptop','Desktop','Workstation','Server','Monitor','Printer','Network Equipment','Phone','Other','Switch','Router','IP Phone','Access Point','Firewall','UPS','Tablet','Scanner','Projector','Docking Station','Webcam','Headset'];
+var MANUFACTURER_PRESETS = ['Dell','HP','Lenovo','Apple','ASUS','Acer','Microsoft','MSI','LG','Samsung','Huawei','Toshiba','Fujitsu','Panasonic','Google','Gigabyte','HPE','Canon','Epson','Brother','Xerox','Ricoh','BenQ','ViewSonic','Philips','NEC','Cisco','Juniper','Arista','Aruba','Ubiquiti','Netgear','TP-Link','D-Link','Fortinet','MikroTik','Polycom','Yealink','Grandstream','Avaya','Xiaomi','OnePlus','Sony','Nokia','Supermicro','Dell EMC','Synology','QNap','APC','Logitech','Jabra','Sennheiser'];
+var PROCESSOR_PRESETS = [
+  'Intel Core i3-12100','Intel Core i3-13100','Intel Core i3-14100',
+  'Intel Core i5-12400','Intel Core i5-13400','Intel Core i5-14400','Intel Core i5-12500','Intel Core i5-13500','Intel Core i5-14500',
+  'Intel Core i5-12450H','Intel Core i5-13450H','Intel Core i5-14450H',
+  'Intel Core i7-12700','Intel Core i7-13700','Intel Core i7-14700',
+  'Intel Core i7-12650H','Intel Core i7-13650H','Intel Core i7-14650H','Intel Core i7-12700H','Intel Core i7-13700H','Intel Core i7-14700H',
+  'Intel Core i9-12900','Intel Core i9-13900','Intel Core i9-14900',
+  'Intel Core i9-12900H','Intel Core i9-13900H','Intel Core i9-14900H','Intel Core i9-13980HX','Intel Core i9-14980HX',
+  'Intel Xeon W-1255','Intel Xeon W-1355','Intel Xeon W-1455',
+  'Intel Xeon Silver 4310','Intel Xeon Silver 4314','Intel Xeon Silver 4316',
+  'Intel Xeon Gold 6330','Intel Xeon Gold 6430','Intel Xeon Gold 6530',
+  'Intel Xeon Platinum 8360Y','Intel Xeon Platinum 8468',
+  'Intel Xeon E-2300','Intel Xeon E-2388',
+  'Intel Celeron G6900','Intel Celeron J4125',
+  'Apple M1','Apple M1 Pro','Apple M1 Max','Apple M1 Ultra',
+  'Apple M2','Apple M2 Pro','Apple M2 Max','Apple M2 Ultra',
+  'Apple M3','Apple M3 Pro','Apple M3 Max',
+  'Apple M4','Apple M4 Pro','Apple M4 Max',
+  'AMD Ryzen 3 3200G','AMD Ryzen 3 4300G','AMD Ryzen 3 5300G',
+  'AMD Ryzen 5 3600','AMD Ryzen 5 5500','AMD Ryzen 5 5600','AMD Ryzen 5 5600X',
+  'AMD Ryzen 5 5600H','AMD Ryzen 5 6600H',
+  'AMD Ryzen 5 7500F','AMD Ryzen 5 8500G','AMD Ryzen 5 8600G',
+  'AMD Ryzen 7 5700X','AMD Ryzen 7 5800X','AMD Ryzen 7 5800X3D',
+  'AMD Ryzen 7 7700','AMD Ryzen 7 7700X','AMD Ryzen 9 5900X','AMD Ryzen 9 7900X',
+  'AMD Ryzen 7 5800H','AMD Ryzen 7 6800H','AMD Ryzen 7 7735HS','AMD Ryzen 7 7840HS',
+  'AMD Ryzen 7 7945HX','AMD Ryzen 9 7940HX','AMD Ryzen 9 8945HS','AMD Ryzen 9 8945HX',
+  'AMD Ryzen 5 7600','AMD Ryzen 5 8600G','AMD Ryzen 7 7700X','AMD Ryzen 7 7800X3D',
+  'AMD Ryzen 7 8700G','AMD Ryzen 9 7900GX','AMD Ryzen 9 9950X',
+  'AMD EPYC 7313P','AMD EPYC 7543','AMD EPYC 7713P','AMD EPYC 7763',
+  'AMD EPYC 8432P','AMD EPYC 8534P','AMD EPYC 9124','AMD EPYC 9354','AMD EPYC 9452','AMD EPYC 9654'
+];
+var GPU_PRESETS = [
+  'NVIDIA GeForce RTX 3050','NVIDIA GeForce RTX 3060','NVIDIA GeForce RTX 3060 Ti',
+  'NVIDIA GeForce RTX 3070','NVIDIA GeForce RTX 3070 Ti','NVIDIA GeForce RTX 3080','NVIDIA GeForce RTX 3080 Ti',
+  'NVIDIA GeForce RTX 3090','NVIDIA GeForce RTX 3090 Ti',
+  'NVIDIA GeForce RTX 4060','NVIDIA GeForce RTX 4060 Ti',
+  'NVIDIA GeForce RTX 4070','NVIDIA GeForce RTX 4070 Ti','NVIDIA GeForce RTX 4070 Super',
+  'NVIDIA GeForce RTX 4080','NVIDIA GeForce RTX 4080 Super','NVIDIA GeForce RTX 4090','NVIDIA GeForce RTX 4090 D',
+  'NVIDIA GeForce RTX 5070 Ti','NVIDIA GeForce RTX 5080','NVIDIA GeForce RTX 5090',
+  'NVIDIA RTX A1000','NVIDIA RTX A2000','NVIDIA RTX A3000','NVIDIA RTX A4000','NVIDIA RTX A4500','NVIDIA RTX A5000','NVIDIA RTX A6000',
+  'NVIDIA RTX 4000 Ada','NVIDIA RTX 5000 Ada','NVIDIA RTX 6000 Ada',
+  'AMD Radeon RX 6400','AMD Radeon RX 6500 XT','AMD Radeon RX 6600','AMD Radeon RX 6600 XT','AMD Radeon RX 6700 XT',
+  'AMD Radeon RX 6750 XT','AMD Radeon RX 6800','AMD Radeon RX 6800 XT','AMD Radeon RX 6900 XT',
+  'AMD Radeon RX 7600','AMD Radeon RX 7600 XT','AMD Radeon RX 7700 XT','AMD Radeon RX 7800 XT','AMD Radeon RX 7900 XTX',
+  'AMD Radeon RX 9070 XT',
+  'AMD Radeon Pro W5500','AMD Radeon Pro W5700','AMD Radeon Pro W6600','AMD Radeon Pro W6800','AMD Radeon Pro W7900',
+  'Intel UHD Graphics 610','Intel UHD Graphics 630','Intel UHD Graphics 730','Intel UHD Graphics 770',
+  'Intel Iris Xe','Intel Iris Xe Plus','Intel Iris Xe MAX',
+  'Intel Arc A310','Intel Arc A370','Intel Arc A580','Intel Arc A750','Intel Arc A770',
+  'Apple M1 GPU','Apple M2 GPU','Apple M3 GPU','Apple M4 GPU'
+];
+var RAM_PRESETS = ['4GB DDR4-2400','8GB DDR4-2666','8GB DDR4-3200','16GB DDR4-3200','16GB DDR5-4800','32GB DDR4-3200','32GB DDR5-4800','32GB DDR5-5600','64GB DDR5-4800','64GB DDR5-5600','64GB DDR5 ECC','128GB DDR5 ECC','16GB LPDDR5','36GB Unified','64GB Unified','96GB Unified','128GB Unified'];
+var SSD_PRESETS = ['128GB NVMe PCIe Gen3','128GB NVMe PCIe Gen4','256GB NVMe PCIe Gen3','256GB NVMe PCIe Gen4','256GB NVMe PCIe Gen5','512GB NVMe PCIe Gen3','512GB NVMe PCIe Gen4','512GB NVMe PCIe Gen5','1TB NVMe PCIe Gen3','1TB NVMe PCIe Gen4','1TB NVMe PCIe Gen5','2TB NVMe PCIe Gen4','2TB NVMe PCIe Gen5','4TB NVMe PCIe Gen4'];
+var HDD_PRESETS = ['500GB 5400RPM SATA','500GB 7200RPM SATA','1TB 5400RPM SATA','1TB 7200RPM SATA','2TB 5400RPM SATA','2TB 7200RPM SATA','3TB 7200RPM SATA','4TB 7200RPM SATA','6TB 7200RPM SATA','8TB 7200RPM SATA','10TB 7200RPM SAS','14TB 7200RPM SAS'];
+
+var STATIC_PRESETS = {
+  dlType:TYPE_PRESETS,dlManufacturer:MANUFACTURER_PRESETS,dlModel:[],
+  dlProcessor:PROCESSOR_PRESETS,dlGPU:GPU_PRESETS,dlRAM:RAM_PRESETS,
+  dlSSD:SSD_PRESETS,dlHDD:HDD_PRESETS,dlLocation:[],dlDepartment:[],dlEmployee:[]
+};
+
+// ============================================================
+//  UTILITY
+// ============================================================
+function genId(){return 'a_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36)}
+function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function fmtCost(c){if(c===null||c===undefined||c==='')return '\u2014';return '$'+Number(c).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function normalizeMAC(m){return (m||'').replace(/[-:\s]/g,'').toUpperCase().trim()}
+function calcAge(ds){if(!ds)return null;var d=new Date(ds),n=new Date(),y=n.getFullYear()-d.getFullYear(),m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate())){y--;m+=12}if(y>0)return y+' year'+(y>1?'s':'')+(m>0?' '+m+' month'+(m>1?'s':''):'');if(m>0)return m+' month'+(m>1?'s':'');return 'Less than 1 month'}
+function warrantyInfo(ds){if(!ds)return {label:'No warranty',cls:'text-muted',icon:'fa-question-circle'};var e=new Date(ds),n=new Date(),d=(e-n)/(864e5*30);if(d<0)return {label:'Expired '+Math.abs(Math.round(d))+'mo ago',cls:'warranty-expired',icon:'fa-times-circle'};if(d<3)return {label:Math.ceil(d)+' mo left',cls:'warranty-warn',icon:'fa-exclamation-triangle'};return {label:Math.ceil(d)+' mo left',cls:'warranty-ok',icon:'fa-check-circle'}}
+function typeBadge(t){if(!t)return '<span class="text-muted text-xs">\u2014</span>';return '<span class="badge '+(TYPE_CLS[t]||'badge-other')+'"><i class="fas '+(TYPE_ICO[t]||'fa-cube')+' text-[10px]"></i>'+esc(t)+'</span>'}
+function condBadge(c){if(!c)return '<span class="text-muted text-xs">\u2014</span>';return '<span class="badge '+(COND_CLS[c]||'badge-other')+'"><i class="fas '+(COND_ICO[c]||'fa-circle')+' text-[10px]"></i>'+c+'</span>'}
+function hwStr(a){if(!a.hardware)return '';var h=a.hardware;return [h.manufacturer,h.model,h.processor,h.ram,h.gpu,h.ssd,h.hdd,h.macAddress].filter(Boolean).join(' ')}
+function specItem(label,value){return '<div class="spec-item"><div class="spec-item-label">'+esc(label)+'</div><div class="spec-item-value">'+(value?esc(value):'\u2014')+'</div></div>'}
+
+// ============================================================
+//  FIELD HISTORY — keyed by datalist ID
+// ============================================================
+var fieldHistory = {};
+
+function loadFieldHistory(){try{var s=storeGet(HISTORY_KEY);if(s){var p=JSON.parse(s);if(p&&typeof p==='object')return p}}catch(e){}return {}}
+function saveFieldHistory(){try{storeSet(HISTORY_KEY,JSON.stringify(fieldHistory))}catch(e){}}
+
+function addToHistory(dlId,value){
+  if(!value)return;value=value.trim();if(!value)return;
+  if(!fieldHistory[dlId])fieldHistory[dlId]=[];
+  var lower=value.toLowerCase();
+  for(var i=0;i<fieldHistory[dlId].length;i++){if(fieldHistory[dlId][i].toLowerCase()===lower)return}
+  fieldHistory[dlId].push(value);
+  fieldHistory[dlId].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});
+  saveFieldHistory();
+}
+
+function syncHistoryFromAssets(){
+  var hist=loadFieldHistory();
+  for(var dlId in DL_MAP){
+    if(!DL_MAP.hasOwnProperty(dlId))continue;
+    var hwProp=DL_MAP[dlId].hwProp;
+    if(!hwProp)continue;
+    if(!hist[dlId])hist[dlId]=[];
+    for(var i=0;i<assets.length;i++){
+      var hw=assets[i].hardware;
+      if(!hw)continue;
+      var val=hw[hwProp];
+      if(val&&hist[dlId].indexOf(val)===-1)hist[dlId].push(val);
+    }
+  }
+  fieldHistory=hist;
+  saveFieldHistory();
+}
+
+// ============================================================
+//  DATALIST BUILDER
+// ============================================================
+function buildDatalist(dlId,staticPresets){
+  var dl=document.getElementById(dlId);if(!dl)return;
+  var hist=fieldHistory[dlId]||[];
+  var map={};
+  for(var i=0;i<staticPresets.length;i++){map[staticPresets[i].toLowerCase()]=staticPresets[i]}
+  for(var i=0;i<hist.length;i++){map[hist[i].toLowerCase()]=hist[i]}
+  var merged=[];for(var k in map){if(map.hasOwnProperty(k))merged.push(map[k])}
+  merged.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});
+  var html='';for(var i=0;i<merged.length;i++){html+='<option value="'+esc(merged[i])+'"></option>'}
+  dl.innerHTML=html;
+}
+
+function buildAllDatalists(){
+  for(var dlId in STATIC_PRESETS){if(STATIC_PRESETS.hasOwnProperty(dlId)){buildDatalist(dlId,STATIC_PRESETS[dlId])}}
+}
+
+// ============================================================
+//  MANAGED LISTS
+// ============================================================
+function loadLists(){try{var s=storeGet(LISTS_KEY);if(s){var p=JSON.parse(s);if(p&&typeof p==='object')return p}}catch(e){}return {departments:[],locations:[],employees:[]}}
+function saveLists(d){try{storeSet(LISTS_KEY,JSON.stringify(d))}catch(e){}}
+
+function syncListsFromAssets(){
+  var lists=loadLists(),changed=false;
+  for(var i=0;i<assets.length;i++){
+    var a=assets[i];
+    if(a.department&&lists.departments.indexOf(a.department)===-1){lists.departments.push(a.department);changed=true}
+    if(a.location&&lists.locations.indexOf(a.location)===-1){lists.locations.push(a.location);changed=true}
+    if(a.assignedTo&&lists.employees.indexOf(a.assignedTo)===-1){lists.employees.push(a.assignedTo);changed=true}
+  }
+  if(changed){
+    lists.departments.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});
+    lists.locations.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});
+    lists.employees.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});
+    saveLists(lists);
+  }
+  return lists;
+}
+
+function buildManagedDatalists(){
+  var lists=loadLists();
+  buildDatalist('dlDepartment',lists.departments);
+  buildDatalist('dlLocation',lists.locations);
+  buildDatalist('dlEmployee',lists.employees);
+}
+
+function addToListIfNew(listKey,value){
+  if(!value)return;
+  var lists=loadLists(),found=false;
+  for(var i=0;i<lists[listKey].length;i++){if(lists[listKey][i].toLowerCase()===value.toLowerCase()){found=true;break}}
+  if(!found){lists[listKey].push(value);lists[listKey].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});saveLists(lists)}
+}
+
+// ============================================================
+//  SEED DATA
+// ============================================================
+function createSeedData(){return[
+  {id:genId(),code:'IT-2024-0001',name:'Dell Latitude 5540',type:'Laptop',serial:'DL-5540-2024-001',location:'New York HQ \u2014 Floor 3',department:'Engineering',assignedTo:'Sarah Chen',condition:'Excellent',cost:1499.99,purchaseDate:'2024-01-15',warrantyExpiry:'2027-01-15',specs:'',hardware:{manufacturer:'Dell',model:'Latitude 5540',processor:'Intel Core i7-13700H',ram:'32GB DDR5-4800',gpu:'Intel Iris Xe',ssd:'512GB NVMe PCIe Gen4',hdd:'',macAddress:'AA:1B:2C:3D:4E:5F'},notes:'Primary work laptop.',createdAt:Date.now()-864e5*2},
+  {id:genId(),code:'IT-2024-0002',name:'MacBook Pro 16"',type:'Laptop',serial:'APL-MBP16-045',location:'San Francisco Office',department:'Design',assignedTo:'Marcus Rivera',condition:'New',cost:2499,purchaseDate:'2024-03-10',warrantyExpiry:'2027-03-10',specs:'',hardware:{manufacturer:'Apple',model:'MacBook Pro 16" M3 Pro',processor:'Apple M3 Pro (12-core)',ram:'36GB Unified',gpu:'Apple M3 Pro (18-core)',ssd:'1TB NVMe',hdd:'',macAddress:'BB:2C:3D:4E:5F:60'},notes:'AppleCare+ included.',createdAt:Date.now()-864e5*5},
+  {id:genId(),code:'IT-2023-0015',name:'HP EliteDesk 800 G9',type:'Desktop',serial:'HP-ED800-112',location:'New York HQ \u2014 Floor 2',department:'Accounting',assignedTo:"James O'Brien",condition:'Good',cost:879,purchaseDate:'2023-06-20',warrantyExpiry:'2026-06-20',specs:'',hardware:{manufacturer:'HP',model:'EliteDesk 800 G9 SFF',processor:'Intel Core i5-13500',ram:'16GB DDR5-4800',gpu:'Intel UHD 770',ssd:'256GB NVMe',hdd:'1TB 7200RPM SATA',macAddress:'CC:3D:4E:5F:60:71'},notes:'Dual monitor setup.',createdAt:Date.now()-864e5*7},
+  {id:genId(),code:'IT-2024-0003',name:'Lenovo ThinkStation P360',type:'Workstation',serial:'LN-TS360-008',location:'Data Center \u2014 Room A',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Excellent',cost:3200,purchaseDate:'2024-02-01',warrantyExpiry:'2027-02-01',specs:'',hardware:{manufacturer:'Lenovo',model:'ThinkStation P360',processor:'Intel Xeon W-1355',ram:'64GB DDR5 ECC',gpu:'NVIDIA RTX A4000 16GB',ssd:'1TB NVMe Gen4',hdd:'4TB 7200RPM',macAddress:'DD:4E:5F:60:71:82'},notes:'CAD workstation.',createdAt:Date.now()-864e5*4},
+  {id:genId(),code:'IT-2023-0022',name:'Dell UltraSharp U2723QE',type:'Monitor',serial:'DL-U27-078',location:'New York HQ \u2014 Floor 3',department:'Engineering',assignedTo:'Sarah Chen',condition:'Good',cost:619.99,purchaseDate:'2023-04-12',warrantyExpiry:'2026-04-12',specs:'27" 4K USB-C Hub, IPS Black, HDR400, 70W PD',hardware:null,notes:'',createdAt:Date.now()-864e5*3},
+  {id:genId(),code:'IT-2022-0010',name:'HP LaserJet Pro M404dn',type:'Printer',serial:'HP-LJ-033',location:'New York HQ \u2014 Floor 2',department:'Accounting',assignedTo:'Shared \u2014 Accounting',condition:'Fair',cost:349,purchaseDate:'2022-09-01',warrantyExpiry:'2024-09-01',specs:'Monochrome Laser, 40ppm, Duplex, Ethernet',hardware:null,notes:'Warranty expired.',createdAt:Date.now()-864e5*10},
+  {id:genId(),code:'IT-2023-0005',name:'Dell PowerEdge R750xs',type:'Server',serial:'DL-PE-001',location:'Data Center \u2014 Room A',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Excellent',cost:8500,purchaseDate:'2023-11-15',warrantyExpiry:'2026-11-15',specs:'Dual Xeon Silver 4316, 128GB DDR4, 4x 1.92TB NVMe RAID 10, iDRAC9',hardware:null,notes:'Production DB server.',createdAt:Date.now()-864e5*15},
+  {id:genId(),code:'IT-2023-0008',name:'Cisco Catalyst 9200L',type:'Network Equipment',serial:'CSC-9200-012',location:'Data Center \u2014 Room B',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Good',cost:4200,purchaseDate:'2023-08-20',warrantyExpiry:'2026-08-20',specs:'24-port PoE+ Gigabit, Layer 3, 370W PoE',hardware:null,notes:'Core distribution switch.',createdAt:Date.now()-864e5*12},
+  {id:genId(),code:'IT-2024-0010',name:'iPhone 15 Pro',type:'Phone',serial:'APL-IP15-089',location:'Chicago Branch',department:'Sales',assignedTo:'Lisa Park',condition:'New',cost:1199,purchaseDate:'2024-04-01',warrantyExpiry:'2025-04-01',specs:'256GB, Natural Titanium, iOS 17, MDM Enrolled',hardware:null,notes:'Corporate phone plan.',createdAt:Date.now()-864e5*1},
+  {id:genId(),code:'IT-2021-0003',name:'APC Smart-UPS 3000VA',type:'Other',serial:'APC-SUA-007',location:'Data Center \u2014 Room A',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Poor',cost:1850,purchaseDate:'2021-03-10',warrantyExpiry:'2024-03-10',specs:'3000VA/2700W, Rack-mount 3U, LCD',hardware:null,notes:'Battery replacement recommended.',createdAt:Date.now()-864e5*20}
+]}
+
+// ============================================================
+//  DATA LAYER — uses storeGet/storeSet/storeRemove
+// ============================================================
+function loadAssets(){
+  try{var s=storeGet(STORAGE_KEY);if(s){var p=JSON.parse(s);if(Array.isArray(p)&&p.length>0)return p}}
+  catch(e){}
+  var seed=createSeedData();saveAssets(seed);return seed;
+}
+function saveAssets(d){try{storeSet(STORAGE_KEY,JSON.stringify(d))}catch(e){}}
+function clearAllStorage(){
+  var allKeys=[STORAGE_KEY,LISTS_KEY,HISTORY_KEY,
+    'assetvault_data','assetvault_data_v2','assetvault_final_v4',
+    'assetvault_v3','assetvault_v4','assetvault_v5','assetvault_v6',
+    'assetvault_v7','assetvault_v8','assetvault_v9','assetvault_v10','assetvault_v11'];
+  storeClear(allKeys);
+}
+
+var assets=loadAssets(),lastAddedId=null;
+syncListsFromAssets();
+fieldHistory=loadFieldHistory();
+syncHistoryFromAssets();
+
+// Show the appropriate storage banner
+(function checkStorageBanner(){
+  var banner=document.getElementById('storageBanner');
+  if(!isPersistenceAvailable()){
+    banner.style.display='block';
+    banner.innerHTML='<div class="storage-banner warn"><i class="fas fa-exclamation-triangle"></i><p><strong>Data won\'t persist after reload.</strong> Your browser is blocking local storage (this is normal when opening the HTML file directly). The app works fully \u2014 just use <strong>Export CSV</strong> to save your data, or open this file through a local web server for automatic persistence.</p></div>';
+  } else {
+    banner.style.display='none';
+  }
+})();
+
+// ============================================================
+//  TOAST
+// ============================================================
+function showToast(msg,type){
+  type=type||'success';
+  var c=document.getElementById('toastContainer'),t=document.createElement('div');t.className='toast';
+  var icons={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle'};
+  var cols={success:'#22c55e',error:'#ef4444',info:'#38bdf8'};
+  t.innerHTML='<i class="fas '+icons[type]+'" style="color:'+cols[type]+'"></i><span>'+msg+'</span>';
+  c.appendChild(t);
+  setTimeout(function(){t.classList.add('out');setTimeout(function(){t.remove()},300)},3000);
+}
+
+// ============================================================
+//  SORT STATE
+// ============================================================
+var sortState={field:'createdAt',dir:'desc'};
+
+function getSortVal(a,field){
+  if(field==='createdAt')return a.createdAt||0;
+  if(field==='cost')return a.cost!=null?a.cost:null;
+  if(field==='purchaseDate'||field==='warrantyExpiry')return a[field]||'';
+  return a[field]||'';
+}
+
+function getFilteredAssets(){
+  var search=(document.getElementById('searchInput').value||'').toLowerCase().trim();
+  var typeF=document.getElementById('filterType').value;
+  var condF=document.getElementById('filterCondition').value;
+  var deptF=document.getElementById('filterDept').value;
+  var locF=document.getElementById('filterLocation').value;
+  var result=[];
+  for(var i=0;i<assets.length;i++){
+    var a=assets[i];
+    if(typeF&&a.type!==typeF)continue;
+    if(condF&&a.condition!==condF)continue;
+    if(deptF&&a.department!==deptF)continue;
+    if(locF&&a.location!==locF)continue;
+    if(search){
+      var hay=(a.code+' '+a.name+' '+a.type+' '+a.serial+' '+a.location+' '+a.department+' '+a.assignedTo+' '+(a.specs||'')+' '+(a.notes||'')+' '+hwStr(a)).toLowerCase();
+      if(hay.indexOf(search)===-1)continue;
+    }
+    result.push(a);
+  }
+  var field=sortState.field,dir=sortState.dir==='asc'?1:-1;
+  result.sort(function(a,b){
+    var va=getSortVal(a,field),vb=getSortVal(b,field);
+    if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;
+    if(typeof va==='number'&&typeof vb==='number')return (va-vb)*dir;
+    return String(va).toLowerCase().localeCompare(String(vb).toLowerCase())*dir;
+  });
+  return result;
+}
+
+function toggleSort(field){
+  if(sortState.field===field){sortState.dir=sortState.dir==='asc'?'desc':'asc'}
+  else{sortState.field=field;sortState.dir='asc'}
+  renderAssets();
+}
+
+// ============================================================
+//  VIEW SWITCHING
+// ============================================================
+function switchView(v){
+  document.getElementById('dashboardView').classList.toggle('hidden',v!=='dashboard');
+  document.getElementById('assetsView').classList.toggle('hidden',v!=='assets');
+  document.getElementById('listsView').classList.toggle('hidden',v!=='lists');
+  var links=document.querySelectorAll('.sidebar-link');
+  for(var i=0;i<links.length;i++){links[i].classList.toggle('active',links[i].getAttribute('data-view')===v)}
+  if(v==='dashboard')renderDashboard();
+  else if(v==='assets')renderAssets();
+  else if(v==='lists')renderLists();
+  if(window.innerWidth<=1024){document.getElementById('sidebar').classList.remove('open')}
+}
+
+function renderCurrentView(){
+  var active=document.querySelector('.sidebar-link.active');
+  var view=active?active.getAttribute('data-view'):'dashboard';
+  if(view==='dashboard')renderDashboard();
+  else if(view==='assets')renderAssets();
+  else if(view==='lists')renderLists();
+}
+
+// ============================================================
+//  DASHBOARD RENDERING
+// ============================================================
+function renderDashboard(){
+  var totalAssets=assets.length,totalValue=0,typesSet={},ageSum=0,ageCount=0,warrantyAlerts=0;
+  for(var i=0;i<assets.length;i++){
+    var a=assets[i];
+    if(a.cost!=null)totalValue+=a.cost;
+    if(a.type)typesSet[a.type]=true;
+    var age=calcAge(a.purchaseDate);
+    if(age){var months=0,ym=age.match(/(\d+)\s*year/),mm=age.match(/(\d+)\s*month/);if(ym)months+=parseInt(ym[1])*12;if(mm)months+=parseInt(mm[1]);ageSum+=months;ageCount++}
+    var wi=warrantyInfo(a.warrantyExpiry);
+    if(wi.cls==='warranty-expired'||wi.cls==='warranty-warn')warrantyAlerts++;
+  }
+  var avgAge=ageCount>0?(ageSum/ageCount):0;
+  var avgAgeStr;if(avgAge<1)avgAgeStr='< 1 month';else if(avgAge<12)avgAgeStr=Math.round(avgAge)+' months';else avgAgeStr=(avgAge/12).toFixed(1)+' years';
+  var typeCount=0;for(var k in typesSet){if(typesSet.hasOwnProperty(k))typeCount++}
+
+  var sg=document.getElementById('statsGrid');
+  sg.innerHTML=
+    statCardHTML('fa-boxes-stacked','Total Assets',totalAssets,'gold')+
+    statCardHTML('fa-dollar-sign','Total Value',fmtCost(totalValue),'blue')+
+    statCardHTML('fa-layer-group','Asset Types',typeCount,'green')+
+    statCardHTML('fa-clock','Avg Age',avgAgeStr,'purple')+
+    statCardHTML('fa-shield-halved','Warranty Alerts',warrantyAlerts,'red',warrantyAlerts>0);
+
+  var sorted=assets.slice().sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
+  renderMiniTable('recentTableWrap',sorted.slice(0,5));
+  renderDistribution('typeDistribution',assets,'type',BAR_COLORS);
+  renderDistribution('locationDistribution',assets,'location',null);
+  renderDistribution('conditionDistribution',assets,'condition',COND_COLORS);
+}
+
+function statCardHTML(icon,label,value,colorClass,warn){
+  return '<div class="stat-card '+colorClass+'"><div class="flex items-center justify-between mb-2"><span class="text-xs text-muted font-medium uppercase tracking-wider">'+label+'</span><i class="fas '+icon+' text-lg" style="color:var(--muted);opacity:.5"></i></div><div class="font-heading text-2xl font-bold text-fg">'+value+'</div>'+(warn?'<div class="text-xs mt-1" style="color:#f97316"><i class="fas fa-exclamation-triangle mr-1"></i>Action needed</div>':'')+'</div>';
+}
+
+function renderDistribution(containerId,data,field,colorMap){
+  var counts={};
+  for(var i=0;i<data.length;i++){var val=data[i][field]||'Unknown';counts[val]=(counts[val]||0)+1}
+  var entries=[];for(var k in counts){if(counts.hasOwnProperty(k))entries.push({name:k,count:counts[k]})}
+  entries.sort(function(a,b){return b.count-a.count});
+  var max=entries.length>0?entries[0].count:1;
+  var defaultColors=['#e8a630','#38bdf8','#22c55e','#a855f7','#f97316','#ec4899','#14b8a6','#eab308','#6b7280','#ef4444'];
+  var html='';
+  for(var i=0;i<entries.length;i++){
+    var e=entries[i],pct=Math.max(5,(e.count/max)*100);
+    var color=colorMap?(colorMap[e.name]||'#6b7280'):defaultColors[i%defaultColors.length];
+    html+='<div class="flex items-center gap-3 mb-2.5">';
+    html+='<span class="text-xs text-muted w-[110px] text-right truncate" title="'+esc(e.name)+'">'+esc(e.name)+'</span>';
+    html+='<div class="flex-1 h-5 rounded-md overflow-hidden" style="background:var(--surface)"><div class="h-full rounded-md transition-all duration-500" style="width:'+pct+'%;background:'+color+';opacity:.8"></div></div>';
+    html+='<span class="text-xs text-fg font-semibold w-[28px] text-right">'+e.count+'</span></div>';
+  }
+  if(entries.length===0){html='<div class="text-center text-muted text-sm py-6">No data</div>'}
+  document.getElementById(containerId).innerHTML=html;
+}
+
+function renderMiniTable(containerId,data){
+  if(data.length===0){document.getElementById(containerId).innerHTML='<div class="empty-state" style="padding:40px 20px"><i class="fas fa-inbox block"></i><p class="text-sm">No assets yet</p></div>';return}
+  var html='<table class="asset-table"><thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Location</th><th>Assigned To</th><th>Condition</th><th>Cost</th></tr></thead><tbody>';
+  for(var i=0;i<data.length;i++){
+    var a=data[i],isNew=a.id===lastAddedId;
+    html+='<tr class="fade-in-row'+(isNew?' highlight-new':'')+'" style="animation-delay:'+(i*30)+'ms">';
+    html+='<td class="font-medium text-fg whitespace-nowrap">'+esc(a.code)+(isNew?' <span class="new-badge">New</span>':'')+'</td>';
+    html+='<td class="text-fg">'+esc(a.name||'\u2014')+'</td>';
+    html+='<td>'+typeBadge(a.type)+'</td>';
+    html+='<td class="text-xs">'+esc(a.location||'\u2014')+'</td>';
+    html+='<td class="text-xs">'+esc(a.assignedTo||'\u2014')+'</td>';
+    html+='<td>'+condBadge(a.condition)+'</td>';
+    html+='<td class="text-xs font-medium whitespace-nowrap">'+fmtCost(a.cost)+'</td></tr>';
+  }
+  html+='</tbody></table>';
+  document.getElementById(containerId).innerHTML=html;
+}
+
+// ============================================================
+//  ASSETS TABLE RENDERING
+// ============================================================
+function renderAssets(){
+  var filtered=getFilteredAssets();
+  document.getElementById('assetCountLabel').textContent=filtered.length+' asset'+(filtered.length!==1?'s':'');
+  if(filtered.length===0){document.getElementById('assetTableWrap').innerHTML='<div class="empty-state"><i class="fas fa-search block"></i><p class="text-sm">No assets match your filters</p></div>';return}
+  var cols=[{key:'code',label:'Code'},{key:'name',label:'Name'},{key:'type',label:'Type'},{key:'serial',label:'Serial'},{key:'location',label:'Location'},{key:'department',label:'Department'},{key:'assignedTo',label:'Assigned To'},{key:'condition',label:'Condition'},{key:'cost',label:'Cost'},{key:'purchaseDate',label:'Purchased'},{key:'warrantyExpiry',label:'Warranty'}];
+  var html='<table class="asset-table"><thead><tr>';
+  for(var c=0;c<cols.length;c++){
+    var col=cols[c],isSorted=sortState.field===col.key;
+    var arrow=isSorted?(sortState.dir==='asc'?' <i class="fas fa-sort-up text-accent"></i>':' <i class="fas fa-sort-down text-accent"></i>'):' <i class="fas fa-sort" style="color:var(--border)"></i>';
+    html+='<th onclick="toggleSort(\''+col.key+'\')">'+col.label+arrow+'</th>';
+  }
+  html+='<th style="text-align:center;cursor:default">Actions</th></tr></thead><tbody>';
+  for(var i=0;i<filtered.length;i++){
+    var a=filtered[i],isNew=a.id===lastAddedId;
+    html+='<tr class="fade-in-row'+(isNew?' highlight-new':'')+'" style="animation-delay:'+(i*20)+'ms">';
+    html+='<td class="font-medium text-fg whitespace-nowrap">'+esc(a.code)+(isNew?' <span class="new-badge">New</span>':'')+'</td>';
+    html+='<td class="text-fg">'+esc(a.name||'\u2014')+'</td>';
+    html+='<td>'+typeBadge(a.type)+'</td>';
+    html+='<td class="text-muted text-xs font-mono">'+esc(a.serial||'\u2014')+'</td>';
+    html+='<td class="text-xs">'+esc(a.location||'\u2014')+'</td>';
+    html+='<td class="text-xs">'+esc(a.department||'\u2014')+'</td>';
+    html+='<td class="text-xs">'+esc(a.assignedTo||'\u2014')+'</td>';
+    html+='<td>'+condBadge(a.condition)+'</td>';
+    html+='<td class="text-xs font-medium whitespace-nowrap">'+fmtCost(a.cost)+'</td>';
+    html+='<td class="text-xs text-muted whitespace-nowrap">'+esc(a.purchaseDate||'\u2014')+'</td>';
+    var wi=warrantyInfo(a.warrantyExpiry);
+    html+='<td class="text-xs whitespace-nowrap '+wi.cls+'"><i class="fas '+wi.icon+' mr-1"></i>'+wi.label+'</td>';
+    html+='<td><div class="row-actions" style="justify-content:center">';
+    html+='<button class="row-action-btn view" onclick="openDetail(\''+a.id+'\')" title="View"><i class="fas fa-eye"></i></button>';
+    html+='<button class="row-action-btn" onclick="openEditModal(\''+a.id+'\')" title="Edit"><i class="fas fa-pen"></i></button>';
+    html+='<button class="row-action-btn delete" onclick="confirmDeleteAsset(\''+a.id+'\')" title="Delete"><i class="fas fa-trash"></i></button>';
+    html+='</div></td></tr>';
+  }
+  html+='</tbody></table>';
+  document.getElementById('assetTableWrap').innerHTML=html;
+  if(lastAddedId){setTimeout(function(){lastAddedId=null},3000)}
+}
+
+// ============================================================
+//  LISTS RENDERING
+// ============================================================
+function renderLists(){
+  var lists=loadLists();
+  document.getElementById('deptCount').textContent=lists.departments.length;
+  document.getElementById('locCount').textContent=lists.locations.length;
+  document.getElementById('empCount').textContent=lists.employees.length;
+  renderListItems('deptList',lists.departments,'departments');
+  renderListItems('locList',lists.locations,'locations');
+  renderListItems('empList',lists.employees,'employees');
+}
+
+function renderListItems(containerId,items,listKey){
+  var el=document.getElementById(containerId);
+  if(items.length===0){el.innerHTML='<div class="list-empty">No items yet. Add one above.</div>';return}
+  var html='';
+  for(var i=0;i<items.length;i++){
+    html+='<div class="list-item list-item-new"><span class="list-item-text"><i class="fas '+LIST_ICONS[listKey]+'"></i>'+esc(items[i])+'</span>';
+    html+='<button class="list-delete-btn" onclick="deleteListItem(\''+listKey+'\','+i+')" title="Remove"><i class="fas fa-times"></i></button></div>';
+  }
+  el.innerHTML=html;
+}
+
+function addListItem(listKey){
+  var inputId=listKey==='departments'?'newDeptInput':listKey==='locations'?'newLocInput':'newEmpInput';
+  var input=document.getElementById(inputId),val=input.value.trim();
+  if(!val)return;
+  var lists=loadLists();
+  for(var i=0;i<lists[listKey].length;i++){if(lists[listKey][i].toLowerCase()===val.toLowerCase()){showToast('This item already exists','error');return}}
+  lists[listKey].push(val);
+  lists[listKey].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});
+  saveLists(lists);input.value='';
+  buildManagedDatalists();populateFilterDropdowns();renderLists();
+  showToast('Added "'+val+'" successfully');
+}
+
+function deleteListItem(listKey,index){
+  var lists=loadLists(),name=lists[listKey][index];
+  lists[listKey].splice(index,1);saveLists(lists);
+  buildManagedDatalists();populateFilterDropdowns();renderLists();
+  showToast('Removed "'+name+'"','info');
+}
+
+// ============================================================
+//  FILTER DROPDOWNS
+// ============================================================
+function populateFilterDropdowns(){
+  var lists=loadLists();
+  var deptSel=document.getElementById('filterDept'),locSel=document.getElementById('filterLocation');
+  var curDept=deptSel.value,curLoc=locSel.value;
+  deptSel.innerHTML='<option value="">All Departments</option>';
+  for(var i=0;i<lists.departments.length;i++){deptSel.innerHTML+='<option value="'+esc(lists.departments[i])+'">'+esc(lists.departments[i])+'</option>'}
+  deptSel.value=curDept;
+  locSel.innerHTML='<option value="">All Locations</option>';
+  for(var i=0;i<lists.locations.length;i++){locSel.innerHTML+='<option value="'+esc(lists.locations[i])+'">'+esc(lists.locations[i])+'</option>'}
+  locSel.value=curLoc;
+}
+
+// ============================================================
+//  ADD / EDIT MODAL
+// ============================================================
+function clearFormErrors(){var errs=document.querySelectorAll('.form-error');for(var i=0;i<errs.length;i++){errs[i].classList.remove('show')}}
+function clearForm(){
+  var inputs=document.querySelectorAll('#assetForm input, #assetForm select, #assetForm textarea');
+  for(var i=0;i<inputs.length;i++){if(inputs[i].type==='hidden')continue;inputs[i].value=''}
+  document.getElementById('ageText').textContent='Set purchase date to calculate';
+  document.getElementById('ageText').style.color='var(--muted)';
+  clearFormErrors();
+}
+
+function openModal(){document.getElementById('assetModal').classList.add('open');document.body.style.overflow='hidden'}
+function closeModal(){document.getElementById('assetModal').classList.remove('open');document.body.style.overflow='';clearFormErrors()}
+
+function openAddModal(){
+  clearForm();document.getElementById('editId').value='';
+  document.getElementById('modalTitle').textContent='Add New Asset';
+  document.getElementById('submitBtn').innerHTML='<i class="fas fa-check text-xs"></i> Save Asset';
+  openModal();
+  if(window.innerWidth<=1024){document.getElementById('sidebar').classList.remove('open')}
+}
+
+function openEditModal(id){
+  var asset=null;for(var i=0;i<assets.length;i++){if(assets[i].id===id){asset=assets[i];break}}
+  if(!asset)return;
+  clearFormErrors();
+  document.getElementById('editId').value=asset.id;
+  document.getElementById('modalTitle').textContent='Edit Asset';
+  document.getElementById('submitBtn').innerHTML='<i class="fas fa-check text-xs"></i> Update Asset';
+  document.getElementById('fCode').value=asset.code||'';
+  document.getElementById('fName').value=asset.name||'';
+  document.getElementById('fType').value=asset.type||'';
+  document.getElementById('fSerial').value=asset.serial||'';
+  document.getElementById('fLocation').value=asset.location||'';
+  document.getElementById('fDepartment').value=asset.department||'';
+  document.getElementById('fAssigned').value=asset.assignedTo||'';
+  document.getElementById('fCondition').value=asset.condition||'';
+  document.getElementById('fCost').value=asset.cost!=null?asset.cost:'';
+  document.getElementById('fPurchaseDate').value=asset.purchaseDate||'';
+  document.getElementById('fWarranty').value=asset.warrantyExpiry||'';
+  document.getElementById('fSpecs').value=asset.specs||'';
+  document.getElementById('fNotes').value=asset.notes||'';
+  var hwFields={fManufacturer:'manufacturer',fModel:'model',fProcessor:'processor',fRAM:'ram',fGPU:'gpu',fSSD:'ssd',fHDD:'hdd',fMAC:'macAddress'};
+  for(var fid in hwFields){
+    if(!hwFields.hasOwnProperty(fid))continue;
+    var prop=hwFields[fid];
+    document.getElementById(fid).value=(asset.hardware&&asset.hardware[prop])?asset.hardware[prop]:'';
+  }
+  updateAgePreview();openModal();
+}
+
+function updateAgePreview(){
+  var ds=document.getElementById('fPurchaseDate').value,el=document.getElementById('ageText');
+  if(!ds){el.textContent='Set purchase date to calculate';el.style.color='var(--muted)';return}
+  var age=calcAge(ds);el.textContent=age||'Less than 1 month';
+  if(!age||age.indexOf('Less than')===0){el.style.color='#22c55e'}
+  else{var years=parseInt(age);if(years>=5)el.style.color='#ef4444';else if(years>=3)el.style.color='#f97316';else el.style.color='#22c55e'}
+}
+
+function handleFormSubmit(e){
+  e.preventDefault();clearFormErrors();
+  var code=document.getElementById('fCode').value.trim();
+  if(!code){document.getElementById('fCodeErr').classList.add('show');return}
+  var serial=document.getElementById('fSerial').value.trim();
+  var editId=document.getElementById('editId').value;
+  if(serial){for(var i=0;i<assets.length;i++){if(assets[i].serial&&assets[i].serial.toLowerCase()===serial.toLowerCase()&&assets[i].id!==editId){document.getElementById('fSerialErr').classList.add('show');return}}}
+  var mac=normalizeMAC(document.getElementById('fMAC').value);
+  if(mac){for(var i=0;i<assets.length;i++){if(assets[i].hardware&&assets[i].hardware.macAddress&&normalizeMAC(assets[i].hardware.macAddress)===mac&&assets[i].id!==editId){document.getElementById('fMACErr').classList.add('show');return}}}
+  var existingCreatedAt=Date.now();
+  if(editId){for(var i=0;i<assets.length;i++){if(assets[i].id===editId){existingCreatedAt=assets[i].createdAt||Date.now();break}}}
+  var asset={id:editId||genId(),code:code,name:document.getElementById('fName').value.trim(),type:document.getElementById('fType').value.trim(),serial:serial,location:document.getElementById('fLocation').value.trim(),department:document.getElementById('fDepartment').value.trim(),assignedTo:document.getElementById('fAssigned').value.trim(),condition:document.getElementById('fCondition').value,cost:document.getElementById('fCost').value!==''?parseFloat(document.getElementById('fCost').value):null,purchaseDate:document.getElementById('fPurchaseDate').value,warrantyExpiry:document.getElementById('fWarranty').value,specs:document.getElementById('fSpecs').value.trim(),notes:document.getElementById('fNotes').value.trim(),hardware:null,createdAt:existingCreatedAt};
+  var hwFieldIds=['fManufacturer','fModel','fProcessor','fRAM','fGPU','fSSD','fHDD'];
+  var hwProps=['manufacturer','model','processor','ram','gpu','ssd','hdd'];
+  var hasHw=false,hw={};
+  for(var i=0;i<hwFieldIds.length;i++){var val=document.getElementById(hwFieldIds[i]).value.trim();if(val){hw[hwProps[i]]=val;hasHw=true}}
+  var macVal=document.getElementById('fMAC').value.trim();if(macVal){hw.macAddress=macVal;hasHw=true}
+  if(hasHw)asset.hardware=hw;
+  if(editId){var idx=-1;for(var i=0;i<assets.length;i++){if(assets[i].id===editId){idx=i;break}}if(idx!==-1)assets[idx]=asset}
+  else{assets.unshift(asset);lastAddedId=asset.id}
+  saveAssets(assets);
+  addToListIfNew('locations',asset.location);
+  addToListIfNew('departments',asset.department);
+  addToListIfNew('employees',asset.assignedTo);
+  for(var dlId in DL_MAP){if(DL_MAP.hasOwnProperty(dlId)){addToHistory(dlId,document.getElementById(DL_MAP[dlId].field).value)}}
+  buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();
+  closeModal();renderCurrentView();
+  showToast(editId?'Asset updated successfully':'Asset added successfully');
+}
+
+// ============================================================
+//  DETAIL VIEW MODAL
+// ============================================================
+function openDetail(id){
+  var asset=null;for(var i=0;i<assets.length;i++){if(assets[i].id===id){asset=assets[i];break}}
+  if(!asset)return;
+  document.getElementById('detailTitle').textContent=asset.code+(asset.name?' \u2014 '+asset.name:'');
+  var html='<div class="flex items-center gap-3 mb-5">'+typeBadge(asset.type)+condBadge(asset.condition)+'</div>';
+  html+='<div class="section-title">Assignment & Location</div><div class="spec-grid mb-5">';
+  html+=specItem('Location',asset.location);html+=specItem('Department',asset.department);
+  html+=specItem('Assigned To',asset.assignedTo);html+=specItem('Serial Number',asset.serial);
+  html+='</div><div class="section-title">Financial & Status</div><div class="spec-grid mb-5">';
+  html+=specItem('Purchase Cost',fmtCost(asset.cost));html+=specItem('Purchase Date',asset.purchaseDate||'\u2014');
+  html+=specItem('Asset Age',calcAge(asset.purchaseDate)||'\u2014');
+  var wi=warrantyInfo(asset.warrantyExpiry);
+  html+='<div class="spec-item"><div class="spec-item-label">Warranty</div><div class="spec-item-value '+wi.cls+'"><i class="fas '+wi.icon+' mr-1"></i>'+wi.label+(asset.warrantyExpiry?' <span class="text-muted text-xs">('+asset.warrantyExpiry+')</span>':'')+'</div></div></div>';
+  if(asset.hardware){
+    html+='<div class="section-title">Hardware Specifications</div><div class="spec-grid mb-5">';
+    var h=asset.hardware;
+    if(h.manufacturer)html+=specItem('Manufacturer',h.manufacturer);if(h.model)html+=specItem('Model',h.model);
+    if(h.processor)html+=specItem('Processor',h.processor);if(h.ram)html+=specItem('RAM',h.ram);
+    if(h.gpu)html+=specItem('Graphics',h.gpu);if(h.ssd)html+=specItem('SSD',h.ssd);
+    if(h.hdd)html+=specItem('HDD',h.hdd);if(h.macAddress)html+=specItem('MAC Address',h.macAddress);
+    html+='</div>';
+  }
+  if(asset.specs){html+='<div class="section-title">Specifications</div><div class="spec-item mb-5"><div class="spec-item-value">'+esc(asset.specs)+'</div></div>'}
+  if(asset.notes){html+='<div class="section-title">Notes</div><div class="spec-item mb-5"><div class="spec-item-value">'+esc(asset.notes)+'</div></div>'}
+  html+='<div class="flex justify-end gap-3 pt-2 border-t border-border mt-2">';
+  html+='<button class="btn-danger-outline" onclick="closeDetail();confirmDeleteAsset(\''+asset.id+'\')"><i class="fas fa-trash text-xs"></i> Delete</button>';
+  html+='<button class="btn-primary" onclick="closeDetail();openEditModal(\''+asset.id+'\')"><i class="fas fa-pen text-xs"></i> Edit</button></div>';
+  document.getElementById('detailBody').innerHTML=html;
+  document.getElementById('detailModal').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeDetail(){document.getElementById('detailModal').classList.remove('open');document.body.style.overflow=''}
+
+// ============================================================
+//  CONFIRM MODAL
+// ============================================================
+var confirmCallback=null;
+function showConfirm(title,text,cb){
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmText').textContent=text;
+  confirmCallback=cb;
+  document.getElementById('confirmModal').classList.add('open');
+  document.getElementById('confirmBox').style.transform='scale(1)';
+}
+function closeConfirm(){document.getElementById('confirmModal').classList.remove('open');document.getElementById('confirmBox').style.transform='scale(0.95)';confirmCallback=null}
+document.getElementById('confirmDeleteBtn').addEventListener('click',function(){if(confirmCallback)confirmCallback();closeConfirm()});
+
+function confirmDeleteAsset(id){
+  var asset=null;for(var i=0;i<assets.length;i++){if(assets[i].id===id){asset=assets[i];break}}
+  if(!asset)return;
+  showConfirm('Delete Asset','Are you sure you want to delete "'+(asset.name||asset.code)+'"? This action cannot be undone.',function(){deleteAsset(id)});
+}
+function deleteAsset(id){
+  var newAssets=[];for(var i=0;i<assets.length;i++){if(assets[i].id!==id)newAssets.push(assets[i])}
+  assets=newAssets;saveAssets(assets);renderCurrentView();showToast('Asset deleted successfully');
+}
+function confirmResetData(){
+  showConfirm('Reset All Data','This will delete all assets and lists, then restore sample data. Are you sure?',function(){resetAllData()});
+}
+function resetAllData(){
+  clearAllStorage();assets=createSeedData();saveAssets(assets);
+  syncListsFromAssets();fieldHistory=loadFieldHistory();syncHistoryFromAssets();
+  buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();
+  sortState={field:'createdAt',dir:'desc'};renderCurrentView();
+  showToast('All data has been reset to defaults','info');
+}
+
+// ============================================================
+//  CSV EXPORT
+// ============================================================
+function exportCSV(){
+  var filtered=getFilteredAssets();if(filtered.length===0){showToast('No assets to export','error');return}
+  var headers=['Asset Code','Name','Type','Serial Number','Location','Department','Assigned To','Condition','Purchase Cost','Purchase Date','Warranty Expiry','Manufacturer','Model','Processor','RAM','GPU','SSD','HDD','MAC Address','Additional Specs','Notes'];
+  var rows=[headers.join(',')];
+  for(var i=0;i<filtered.length;i++){
+    var a=filtered[i],hw=a.hardware||{};
+    rows.push([csvCell(a.code),csvCell(a.name),csvCell(a.type),csvCell(a.serial),csvCell(a.location),csvCell(a.department),csvCell(a.assignedTo),csvCell(a.condition),csvCell(a.cost!=null?a.cost:''),csvCell(a.purchaseDate),csvCell(a.warrantyExpiry),csvCell(hw.manufacturer),csvCell(hw.model),csvCell(hw.processor),csvCell(hw.ram),csvCell(hw.gpu),csvCell(hw.ssd),csvCell(hw.hdd),csvCell(hw.macAddress),csvCell(a.specs),csvCell(a.notes)].join(','));
+  }
+  var csv=rows.join('\n'),blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob);
+  var link=document.createElement('a');link.href=url;link.download='assetvault_export_'+new Date().toISOString().slice(0,10)+'.csv';
+  link.click();URL.revokeObjectURL(url);showToast('Exported '+filtered.length+' assets to CSV','info');
+}
+function csvCell(val){if(val===null||val===undefined)return '';var s=String(val);if(s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1){return '"'+s.replace(/"/g,'""')+'"'}return s}
+
+// ============================================================
+//  SIDEBAR TOGGLE & KEYBOARD
+// ============================================================
+document.getElementById('sidebarToggle').addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open')});
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=1024){var sidebar=document.getElementById('sidebar'),toggle=document.getElementById('sidebarToggle');if(sidebar.classList.contains('open')&&!sidebar.contains(e.target)&&!toggle.contains(e.target)){sidebar.classList.remove('open')}}
+});
+document.getElementById('assetModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetail()});
+document.getElementById('confirmModal').addEventListener('click',function(e){if(e.target===this)closeConfirm()});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){if(document.getElementById('confirmModal').classList.contains('open'))closeConfirm();else if(document.getElementById('detailModal').classList.contains('open'))closeDetail();else if(document.getElementById('assetModal').classList.contains('open'))closeModal()}
+});
+
+// ============================================================
+//  INIT
+// ============================================================
+(function init(){buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();renderDashboard()})();
+</script>
+</body>
+</html>
