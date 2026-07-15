@@ -1,43 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AssetVault — IT Asset Management</title>
+<title>BUNA IT Assets</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<!-- SheetJS — reads .xlsx / .xls / .csv files -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-tailwind.config={theme:{extend:{fontFamily:{heading:['Space Grotesk','sans-serif'],body:['DM Sans','sans-serif']},colors:{bg:'#0c0e12',surface:'#13161c',card:'#191d26',border:'#262b37',muted:'#6b7280',fg:'#e5e7eb',accent:'#e8a630',accentHover:'#f0b840',danger:'#ef4444',success:'#22c55e',info:'#38bdf8'}}}}
+tailwind.config={theme:{extend:{fontFamily:{heading:['Space Grotesk','Noto Sans Arabic','sans-serif'],body:['DM Sans','Noto Sans Arabic','sans-serif']},colors:{bg:'#0c0e12',surface:'#13161c',card:'#191d26',border:'#262b37',muted:'#6b7280',fg:'#e5e7eb',accent:'#27AE60',accentHover:'#2ECC71',danger:'#ef4444',success:'#22c55e',info:'#38bdf8'}}}}
 </script>
 <style>
-:root{--bg:#0c0e12;--surface:#13161c;--card:#191d26;--border:#262b37;--muted:#6b7280;--fg:#e5e7eb;--accent:#e8a630;--accent-hover:#f0b840}
+:root{--bg:#0c0e12;--surface:#13161c;--card:#191d26;--border:#262b37;--muted:#6b7280;--fg:#e5e7eb;--accent:#27AE60;--accent-hover:#2ECC71}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--fg);font-family:'DM Sans',sans-serif;overflow-x:hidden}
-body::before{content:'';position:fixed;top:-30%;right:-15%;width:600px;height:600px;background:radial-gradient(circle,rgba(232,166,48,.06)0%,transparent 70%);pointer-events:none;z-index:0}
+body{background:var(--bg);color:var(--fg);font-family:'DM Sans','Noto Sans Arabic',sans-serif;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-30%;right:-15%;width:600px;height:600px;background:radial-gradient(circle,rgba(39,174,96,.06)0%,transparent 70%);pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;bottom:-20%;left:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(56,189,248,.04)0%,transparent 70%);pointer-events:none;z-index:0}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--surface)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+[dir="rtl"] .sidebar{border-right:none;border-left:1px solid var(--border)}
 .sidebar-link{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:8px;color:var(--muted);font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
 .sidebar-link:hover{color:var(--fg);background:rgba(255,255,255,.04)}
-.sidebar-link.active{color:var(--accent);background:rgba(232,166,48,.08)}
+.sidebar-link.active{color:var(--accent);background:rgba(39,174,96,.08)}
 .sidebar-link i{width:20px;text-align:center;font-size:15px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
-.stat-card:hover{transform:translateY(-2px);border-color:rgba(232,166,48,.3)}
+.stat-card:hover{transform:translateY(-2px);border-color:rgba(39,174,96,.3)}
 .stat-card::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;filter:blur(40px);opacity:.15;pointer-events:none}
-.stat-card.gold::after{background:#e8a630}.stat-card.blue::after{background:#38bdf8}.stat-card.green::after{background:#22c55e}.stat-card.red::after{background:#ef4444}.stat-card.purple::after{background:#a855f7}
+.stat-card.gold::after{background:#27AE60}.stat-card.blue::after{background:#38bdf8}.stat-card.green::after{background:#14b8a6}.stat-card.red::after{background:#ef4444}.stat-card.purple::after{background:#a855f7}
 .asset-table{width:100%;border-collapse:separate;border-spacing:0}
 .asset-table thead th{background:var(--surface);padding:11px 13px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2;cursor:pointer;user-select:none;transition:color .2s;white-space:nowrap}
+[dir="rtl"] .asset-table thead th{text-align:right}
 .asset-table thead th:hover{color:var(--fg)}
 .asset-table thead th.no-sort{cursor:default}.asset-table thead th.no-sort:hover{color:var(--muted)}
 .asset-table tbody tr{transition:background .15s;border-bottom:1px solid rgba(38,43,55,.5)}
-.asset-table tbody tr:hover{background:rgba(232,166,48,.03)}
+.asset-table tbody tr:hover{background:rgba(39,174,96,.03)}
 .asset-table tbody td{padding:11px 13px;font-size:13px;vertical-align:middle}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
-.badge-laptop{background:rgba(232,166,48,.12);color:#e8a630}.badge-desktop{background:rgba(56,189,248,.12);color:#38bdf8}
+.badge-laptop{background:rgba(39,174,96,.12);color:#27AE60}.badge-desktop{background:rgba(56,189,248,.12);color:#38bdf8}
 .badge-workstation{background:rgba(249,115,22,.12);color:#f97316}.badge-monitor{background:rgba(168,85,247,.12);color:#a855f7}
 .badge-printer{background:rgba(34,197,94,.12);color:#22c55e}.badge-server{background:rgba(239,68,68,.12);color:#ef4444}
 .badge-network{background:rgba(251,191,36,.12);color:#fbbf24}.badge-phone{background:rgba(236,72,153,.12);color:#ec4899}
@@ -45,14 +46,15 @@ body::after{content:'';position:fixed;bottom:-20%;left:-10%;width:500px;height:5
 .cond-new{background:rgba(34,197,94,.12);color:#22c55e}.cond-excellent{background:rgba(56,189,248,.12);color:#38bdf8}
 .cond-good{background:rgba(20,184,166,.12);color:#14b8a6}.cond-fair{background:rgba(234,179,8,.12);color:#eab308}
 .cond-poor{background:rgba(249,115,22,.12);color:#f97316}.cond-oos{background:rgba(239,68,68,.12);color:#ef4444}
-.btn-primary{background:var(--accent);color:#0c0e12;font-weight:600;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:14px;transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif}
-.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 20px rgba(232,166,48,.25)}
-.btn-ghost{background:transparent;color:var(--muted);font-weight:500;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-size:13px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--accent);color:#fff;font-weight:600;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:14px;transition:all .2s;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 20px rgba(39,174,96,.25)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--muted);font-weight:500;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
 .btn-ghost:hover{color:var(--fg);background:rgba(255,255,255,.06)}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .btn-sm{padding:7px 14px;font-size:12px;border-radius:6px}
-.btn-danger-outline{background:transparent;border:1px solid rgba(239,68,68,.3);color:#ef4444;font-weight:500;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
+.btn-danger-outline{background:transparent;border:1px solid rgba(239,68,68,.3);color:#ef4444;font-weight:500;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
 .btn-danger-outline:hover{border-color:#ef4444;background:rgba(239,68,68,.08)}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;opacity:0;pointer-events:none;transition:opacity .25s;overflow-y:auto}
 .modal-overlay.open{opacity:1;pointer-events:all}
@@ -61,8 +63,8 @@ body::after{content:'';position:fixed;bottom:-20%;left:-10%;width:500px;height:5
 .form-group{margin-bottom:13px}
 .form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
 .form-label .required{color:#ef4444;margin-left:2px}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--fg);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,166,48,.12)}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--fg);font-size:14px;font-family:inherit;transition:border-color .2s,box-shadow .2s;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(39,174,96,.12)}
 .form-input::placeholder,.form-textarea::placeholder{color:#3d4250}
 .form-select option{background:var(--card);color:var(--fg)}
 .form-textarea{resize:vertical;min-height:56px}
@@ -71,11 +73,17 @@ body::after{content:'';position:fixed;bottom:-20%;left:-10%;width:500px;height:5
 input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:pointer}
 .section-title{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .toast-container{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
+[dir="rtl"] .toast-container{right:auto;left:20px}
 .toast{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:toastIn .35s cubic-bezier(.4,0,.2,1);min-width:280px}
 .toast.out{animation:toastOut .3s forwards}
 @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 @keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
-.search-box{position:relative}.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}.search-box input{padding-left:40px}
+[dir="rtl"] .toast{animation-name:toastInRtl}
+@keyframes toastInRtl{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+.search-box{position:relative}.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+[dir="rtl"] .search-box i{left:auto;right:14px}
+.search-box input{padding-left:40px}
+[dir="rtl"] .search-box input{padding-left:13px;padding-right:40px}
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:150;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .confirm-overlay.open{opacity:1;pointer-events:all}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}.empty-state i{font-size:48px;margin-bottom:16px;opacity:.3}
@@ -83,10 +91,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:p
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
 @keyframes fadeInRow{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .fade-in-row{animation:fadeInRow .3s ease forwards}
-@keyframes highlightNew{0%{background:rgba(232,166,48,.15)}100%{background:transparent}}
+@keyframes highlightNew{0%{background:rgba(39,174,96,.15)}100%{background:transparent}}
 .highlight-new{animation:highlightNew 2.5s ease forwards}
-.sidebar-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:50;background:var(--accent);color:#0c0e12;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 20px rgba(232,166,48,.3)}
-@media(max-width:1024px){.sidebar{position:fixed;left:0;top:0;z-index:60;transform:translateX(-100%);height:100vh}.sidebar.open{transform:translateX(0)}.sidebar-toggle{display:flex;align-items:center;justify-content:center}.main-content{margin-left:0!important}}
+.sidebar-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:50;background:var(--accent);color:#fff;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 20px rgba(39,174,96,.3)}
+[dir="rtl"] .sidebar-toggle{right:auto;left:20px}
+@media(max-width:1024px){.sidebar{position:fixed;left:0;top:0;z-index:60;transform:translateX(-100%);height:100vh}.sidebar.open{transform:translateX(0)}[dir="rtl"] .sidebar{left:auto;right:0;transform:translateX(100%)}[dir="rtl"] .sidebar.open{transform:translateX(0)}.sidebar-toggle{display:flex;align-items:center;justify-content:center}.main-content{margin-left:0!important}[dir="rtl"] .main-content{margin-right:0!important}}
 .row-actions{display:flex;gap:3px}
 .row-action-btn{width:30px;height:30px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
 .row-action-btn:hover{background:rgba(255,255,255,.06);color:var(--fg)}
@@ -97,38 +106,48 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:p
 .spec-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px}
 .spec-item-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
 .spec-item-value{font-size:13px;color:var(--fg);font-weight:500;word-break:break-word}
-.new-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(232,166,48,.15);color:#e8a630;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em;animation:pulse 1.5s infinite}
+.new-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(39,174,96,.15);color:#27AE60;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em;animation:pulse 1.5s infinite}
 .warranty-warn{color:#f97316}.warranty-expired{color:#ef4444}.warranty-ok{color:#22c55e}
 .storage-banner{border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-.storage-banner i{font-size:18px;flex-shrink:0}
-.storage-banner p{font-size:13px;flex:1}
+.storage-banner i{font-size:18px;flex-shrink:0}.storage-banner p{font-size:13px;flex:1}
 .storage-banner.warn{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2)}
 .storage-banner.warn i{color:#eab308}.storage-banner.warn p{color:#fbbf24}
 .list-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid rgba(38,43,55,.3);transition:background .15s}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-bottom:1px solid rgba(38,43,55,.3);transition:background .15s;min-height:46px;gap:8px}
 .list-item:last-child{border-bottom:none}
-.list-item:hover{background:rgba(232,166,48,.02)}
-.list-item-text{font-size:14px;color:var(--fg);display:flex;align-items:center;gap:10px}
-.list-item-text i{color:var(--muted);font-size:13px;width:18px;text-align:center}
+.list-item:hover{background:rgba(39,174,96,.02)}
+.list-item-text{font-size:14px;color:var(--fg);display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.list-item-text i{color:var(--muted);font-size:13px;width:18px;text-align:center;flex-shrink:0}
+.list-item-text span{cursor:pointer;transition:color .15s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.list-item-text span:hover{color:var(--accent)}
+.list-item-actions{display:flex;gap:4px;flex-shrink:0}
 .list-item-count{font-size:11px;color:var(--muted);background:var(--surface);padding:2px 8px;border-radius:10px}
-.list-delete-btn{width:28px;height:28px;border-radius:6px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;flex-shrink:0}
+.list-edit-btn{width:26px;height:26px;border-radius:5px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s}
+.list-edit-btn:hover{background:rgba(39,174,96,.1);color:var(--accent)}
+.list-delete-btn{width:26px;height:26px;border-radius:5px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;flex-shrink:0}
 .list-delete-btn:hover{background:rgba(239,68,68,.1);color:#ef4444}
 .list-add-row{padding:16px 24px;display:flex;gap:10px}
 .list-empty{padding:30px 24px;text-align:center;color:var(--muted);font-size:13px}
+.list-edit-input{background:var(--surface);border:1px solid var(--accent);border-radius:5px;padding:4px 8px;color:var(--fg);font-size:14px;font-family:inherit;outline:none;width:100%;box-shadow:0 0 0 3px rgba(39,174,96,.12)}
+.list-header-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.list-header-actions .btn-outline{font-size:11px;padding:5px 10px}
 @keyframes itemIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
 .list-item-new{animation:itemIn .3s ease}
 .drop-zone{border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .25s}
-.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:rgba(232,166,48,.03)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:rgba(39,174,96,.03)}
 .drop-zone.dragover{transform:scale(1.01)}
 .import-preview-table{width:100%;border-collapse:collapse;font-size:12px}
 .import-preview-table th{background:var(--surface);padding:8px 10px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--border);position:sticky;top:0;white-space:nowrap}
+[dir="rtl"] .import-preview-table th{text-align:right}
 .import-preview-table td{padding:7px 10px;border-bottom:1px solid rgba(38,43,55,.3);color:var(--fg);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .import-preview-table tr.row-skip td{opacity:.35;text-decoration:line-through}
 .import-preview-table tr.row-new td{color:#22c55e}
 .import-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
 .import-badge-new{background:rgba(34,197,94,.12);color:#22c55e}
 .import-badge-skip{background:rgba(107,114,128,.12);color:#9ca3af}
-.import-badge-error{background:rgba(239,68,68,.12);color:#ef4444}
+.sidebar-logo{height:40px;width:auto;object-fit:contain;display:block}
+.lang-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:6px}
+.lang-btn:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -136,69 +155,68 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:p
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
 
 <aside class="sidebar fixed top-0 left-0 h-screen w-[240px] flex flex-col py-6 px-4" id="sidebar">
-  <div class="flex items-center gap-3 px-4 mb-8"><div class="w-9 h-9 rounded-lg bg-accent flex items-center justify-center"><i class="fas fa-vault text-bg text-sm"></i></div><div><h1 class="font-heading font-bold text-fg text-base leading-tight">AssetVault</h1><p class="text-[11px] text-muted font-medium tracking-wider uppercase">IT Management</p></div></div>
+  <div class="px-2 mb-6">
+    <img src="https://z-cdn-media.chatglm.cn/files/fae2e17c-20c9-400a-a607-ed3eae1d3138.jpg?auth_key=1884039709-db8b3461bbde4386a3ceb64d45c0a625-0-a785cc92299f6fe05a829264fc9b27f9" alt="BUNA" class="sidebar-logo mb-1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="items-center gap-2 mb-1" style="display:none"><div class="w-9 h-9 rounded-lg bg-accent flex items-center justify-center text-white font-heading font-bold text-base">B</div><div><div class="font-heading font-bold text-fg text-base leading-tight">BUNA</div></div></div>
+    <p class="text-[11px] text-muted font-medium tracking-wider uppercase" data-t="sidebarSubtitle">IT Asset Management</p>
+  </div>
   <nav class="flex flex-col gap-1 flex-1">
-    <div class="sidebar-link active" data-view="dashboard" onclick="switchView('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
-    <div class="sidebar-link" data-view="assets" onclick="switchView('assets')"><i class="fas fa-server"></i> All Assets</div>
-    <div class="sidebar-link" data-view="lists" onclick="switchView('lists')"><i class="fas fa-list-ul"></i> Manage Lists</div>
-    <div class="sidebar-link" data-view="add" onclick="openAddModal()"><i class="fas fa-plus-circle"></i> Add Asset</div>
+    <div class="sidebar-link active" data-view="dashboard" onclick="switchView('dashboard')"><i class="fas fa-chart-pie"></i> <span data-t="navDashboard">Dashboard</span></div>
+    <div class="sidebar-link" data-view="assets" onclick="switchView('assets')"><i class="fas fa-server"></i> <span data-t="navAssets">All Assets</span></div>
+    <div class="sidebar-link" data-view="lists" onclick="switchView('lists')"><i class="fas fa-list-ul"></i> <span data-t="navLists">Manage Lists</span></div>
+    <div class="sidebar-link" data-view="add" onclick="openAddModal()"><i class="fas fa-plus-circle"></i> <span data-t="navAdd">Add Asset</span></div>
   </nav>
-  <div class="mt-auto pt-4 border-t border-border px-2">
-    <button class="btn-danger-outline w-full justify-center mb-3" onclick="confirmResetData()"><i class="fas fa-trash-restore text-xs"></i> Reset All Data</button>
-    <div class="flex items-center gap-3 px-3 py-2"><div class="pulse-dot"></div><span class="text-xs text-muted">System Online</span></div>
-    <p class="text-[11px] text-muted px-3 mt-1 opacity-60">v3.5.0</p>
+  <div class="mt-auto pt-4 border-t border-border px-2 flex flex-col gap-2">
+    <button class="lang-btn w-full justify-center" onclick="toggleLang()" id="langToggleBtn"><i class="fas fa-globe"></i> <span id="langLabel">العربية</span></button>
+    <button class="btn-danger-outline w-full justify-center" onclick="confirmResetData()"><i class="fas fa-trash-restore text-xs"></i> <span data-t="resetAll">Reset All Data</span></button>
+    <div class="flex items-center gap-3 px-3 py-2"><div class="pulse-dot"></div><span class="text-xs text-muted" data-t="systemOnline">System Online</span></div>
+    <p class="text-[11px] text-muted px-3 mt-1 opacity-60">v3.6.0</p>
   </div>
 </aside>
 
 <main class="main-content ml-[240px] min-h-screen relative z-10">
+[dir="rtl"] .main-content{margin-left:0;margin-right:240px}
   <div id="storageBanner" style="display:none" class="p-6 lg:px-8 pt-6"></div>
 
-  <!-- Dashboard -->
   <section id="dashboardView" class="p-6 lg:p-8">
-    <header class="mb-6">
-      <h2 class="font-heading text-2xl font-bold text-fg">Dashboard</h2>
-      <p class="text-muted text-sm mt-1">Overview of your IT asset inventory</p>
-    </header>
-    <!-- Data management toolbar -->
+    <header class="mb-6"><h2 class="font-heading text-2xl font-bold text-fg" data-t="dashboard">Dashboard</h2><p class="text-muted text-sm mt-1" data-t="dashboardDesc">Overview of your IT asset inventory</p></header>
     <div class="flex flex-wrap items-center gap-3 mb-6">
-      <button class="btn-outline" onclick="exportCSV()"><i class="fas fa-download text-xs"></i> Export CSV</button>
-      <button class="btn-outline" onclick="downloadTemplate()"><i class="fas fa-file-csv text-xs"></i> Download Template</button>
-      <button class="btn-primary" onclick="openImportModal()"><i class="fas fa-file-import text-xs"></i> Import Assets</button>
+      <button class="btn-outline" onclick="exportCSV()"><i class="fas fa-download text-xs"></i> <span data-t="exportCSV">Export CSV</span></button>
+      <button class="btn-outline" onclick="downloadTemplate()"><i class="fas fa-file-csv text-xs"></i> <span data-t="downloadTemplate">Download Template</span></button>
+      <button class="btn-primary" onclick="openImportModal()"><i class="fas fa-file-import text-xs"></i> <span data-t="importAssets">Import Assets</span></button>
       <div class="flex-1"></div>
-      <button class="btn-danger-outline" onclick="confirmDeleteAllAssets()"><i class="fas fa-trash text-xs"></i> Delete All Assets</button>
+      <button class="btn-danger-outline" onclick="confirmDeleteAllAssets()"><i class="fas fa-trash text-xs"></i> <span data-t="deleteAll">Delete All Assets</span></button>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8" id="statsGrid"></div>
-    <div class="bg-card border border-border rounded-2xl overflow-hidden"><div class="flex items-center justify-between px-6 py-4 border-b border-border"><h3 class="font-heading font-semibold text-fg text-base">Recently Added Assets</h3><button class="btn-outline text-xs" onclick="switchView('assets')">View All <i class="fas fa-arrow-right text-[10px]"></i></button></div><div class="overflow-x-auto" id="recentTableWrap"></div></div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6"><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4">Assets by Type</h3><div id="typeDistribution"></div></div><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4">Assets by Location</h3><div id="locationDistribution"></div></div><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4">Condition Overview</h3><div id="conditionDistribution"></div></div></div>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden"><div class="flex items-center justify-between px-6 py-4 border-b border-border"><h3 class="font-heading font-semibold text-fg text-base" data-t="recentAssets">Recently Added Assets</h3><button class="btn-outline text-xs" onclick="switchView('assets')"><span data-t="viewAll">View All</span> <i class="fas fa-arrow-right text-[10px]"></i></button></div><div class="overflow-x-auto" id="recentTableWrap"></div></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6"><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4" data-t="byType">Assets by Type</h3><div id="typeDistribution"></div></div><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4" data-t="byLocation">Assets by Location</h3><div id="locationDistribution"></div></div><div class="bg-card border border-border rounded-2xl p-6"><h3 class="font-heading font-semibold text-fg text-base mb-4" data-t="byCondition">Condition Overview</h3><div id="conditionDistribution"></div></div></div>
   </section>
 
-  <!-- Assets List -->
   <section id="assetsView" class="p-6 lg:p-8 hidden">
     <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-      <div><h2 class="font-heading text-2xl font-bold text-fg">All Assets</h2><p class="text-muted text-sm mt-1" id="assetCountLabel">0 assets</p></div>
+      <div><h2 class="font-heading text-2xl font-bold text-fg" data-t="allAssets">All Assets</h2><p class="text-muted text-sm mt-1" id="assetCountLabel">0 assets</p></div>
       <div class="flex items-center gap-3 flex-wrap">
-        <button class="btn-outline" onclick="exportCSV()"><i class="fas fa-download text-xs"></i> Export</button>
-        <button class="btn-outline" onclick="downloadTemplate()"><i class="fas fa-file-csv text-xs"></i> Template</button>
-        <button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus text-xs"></i> Add Asset</button>
+        <button class="btn-outline" onclick="exportCSV()"><i class="fas fa-download text-xs"></i> <span data-t="export">Export</span></button>
+        <button class="btn-outline" onclick="downloadTemplate()"><i class="fas fa-file-csv text-xs"></i> <span data-t="template">Template</span></button>
+        <button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus text-xs"></i> <span data-t="addAsset">Add Asset</span></button>
       </div>
     </header>
     <div class="flex flex-col sm:flex-row gap-3 mb-5 flex-wrap">
-      <div class="search-box flex-1 min-w-[200px]"><i class="fas fa-search"></i><input type="text" class="form-input" placeholder="Search..." id="searchInput" oninput="renderAssets()"></div>
-      <select class="form-select sm:w-[140px]" id="filterType" onchange="renderAssets()"><option value="">All Types</option><option value="Laptop">Laptop</option><option value="Desktop">Desktop</option><option value="Workstation">Workstation</option><option value="Monitor">Monitor</option><option value="Printer">Printer</option><option value="Server">Server</option><option value="Network Equipment">Network Equipment</option><option value="Phone">Phone</option><option value="Other">Other</option></select>
-      <select class="form-select sm:w-[140px]" id="filterCondition" onchange="renderAssets()"><option value="">All Conditions</option><option value="New">New</option><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option><option value="Poor">Poor</option><option value="Out of Service">Out of Service</option></select>
-      <select class="form-select sm:w-[160px]" id="filterDept" onchange="renderAssets()"><option value="">All Departments</option></select>
-      <select class="form-select sm:w-[160px]" id="filterLocation" onchange="renderAssets()"><option value="">All Locations</option></select>
+      <div class="search-box flex-1 min-w-[200px]"><i class="fas fa-search"></i><input type="text" class="form-input" placeholder="Search..." id="searchInput" oninput="renderAssets()" data-t-ph="search"></div>
+      <select class="form-select sm:w-[140px]" id="filterType" onchange="renderAssets()"><option value="" data-t="allTypes">All Types</option><option value="Laptop">Laptop</option><option value="Desktop">Desktop</option><option value="Workstation">Workstation</option><option value="Monitor">Monitor</option><option value="Printer">Printer</option><option value="Server">Server</option><option value="Network Equipment">Network Equipment</option><option value="Phone">Phone</option><option value="Other">Other</option></select>
+      <select class="form-select sm:w-[140px]" id="filterCondition" onchange="renderAssets()"><option value="" data-t="allConditions">All Conditions</option><option value="New">New</option><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option><option value="Poor">Poor</option><option value="Out of Service">Out of Service</option></select>
+      <select class="form-select sm:w-[160px]" id="filterDept" onchange="renderAssets()"><option value="" data-t="allDepts">All Departments</option></select>
+      <select class="form-select sm:w-[160px]" id="filterLocation" onchange="renderAssets()"><option value="" data-t="allLocs">All Locations</option></select>
     </div>
     <div class="bg-card border border-border rounded-2xl overflow-hidden"><div class="overflow-x-auto" style="max-height:calc(100vh - 300px);overflow-y:auto" id="assetTableWrap"></div></div>
   </section>
 
-  <!-- Manage Lists -->
   <section id="listsView" class="p-6 lg:p-8 hidden">
-    <header class="mb-8"><h2 class="font-heading text-2xl font-bold text-fg">Manage Lists</h2><p class="text-muted text-sm mt-1">Add departments, locations, and employees. These appear as suggestions when adding assets.</p></header>
+    <header class="mb-8"><h2 class="font-heading text-2xl font-bold text-fg" data-t="manageLists">Manage Lists</h2><p class="text-muted text-sm mt-1" data-t="manageListsDesc">Click any name to edit it inline. Use buttons to add, import, or export.</p></header>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-info/10 flex items-center justify-center"><i class="fas fa-building text-info text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base">Departments</h3><span class="list-item-count" id="deptCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newDeptInput" placeholder="e.g. Marketing" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('departments')}"><button class="btn-primary btn-sm" onclick="addListItem('departments')"><i class="fas fa-plus text-xs"></i></button></div><div id="deptList"></div></div>
-      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center"><i class="fas fa-map-marker-alt text-success text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base">Locations / Branches</h3><span class="list-item-count" id="locCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newLocInput" placeholder="e.g. London Office" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('locations')}"><button class="btn-primary btn-sm" onclick="addListItem('locations')"><i class="fas fa-plus text-xs"></i></button></div><div id="locList"></div></div>
-      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center"><i class="fas fa-users text-accent text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base">Employees / Offices</h3><span class="list-item-count" id="empCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newEmpInput" placeholder="e.g. John Smith" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('employees')}"><button class="btn-primary btn-sm" onclick="addListItem('employees')"><i class="fas fa-plus text-xs"></i></button></div><div id="empList"></div></div>
+      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-info/10 flex items-center justify-center"><i class="fas fa-building text-info text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base" data-t="departments">Departments</h3><span class="list-item-count" id="deptCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newDeptInput" data-t-ph="deptPh" placeholder="e.g. Marketing" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('departments')}"><button class="btn-primary btn-sm" onclick="addListItem('departments')"><i class="fas fa-plus text-xs"></i></button></div><div id="deptList"></div></div>
+      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center"><i class="fas fa-map-marker-alt text-success text-sm"></i></div><div><h3 class="font-heading font-semibold text-fg text-base" data-t="locations">Locations / Branches</h3><span class="list-item-count" id="locCount">0</span></div></div></div><div class="list-add-row"><input type="text" class="form-input" id="newLocInput" data-t-ph="locPh" placeholder="e.g. London Office" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('locations')}"><button class="btn-primary btn-sm" onclick="addListItem('locations')"><i class="fas fa-plus text-xs"></i></button></div><div id="locList"></div></div>
+      <div class="list-card"><div class="px-6 py-5 border-b border-border"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center"><i class="fas fa-users text-accent text-sm"></i></div><div class="flex-1"><h3 class="font-heading font-semibold text-fg text-base" data-t="employees">Employees / Offices</h3><span class="list-item-count" id="empCount">0</span></div></div><div class="list-header-actions"><button class="btn-outline" onclick="exportEmployeeList()"><i class="fas fa-download text-[10px]"></i> <span data-t="exportEmp">Export</span></button><button class="btn-outline" onclick="openEmpImportModal()"><i class="fas fa-file-import text-[10px]"></i> <span data-t="importEmp">Import</span></button></div></div><div class="list-add-row"><input type="text" class="form-input" id="newEmpInput" data-t-ph="empPh" placeholder="e.g. John Smith" onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('employees')}"><button class="btn-primary btn-sm" onclick="addListItem('employees')"><i class="fas fa-plus text-xs"></i></button></div><div id="empList"></div></div>
     </div>
   </section>
 </main>
@@ -206,575 +224,404 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:p
 <!-- Add / Edit Modal -->
 <div class="modal-overlay" id="assetModal">
   <div class="modal-content">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg" id="modalTitle">Add New Asset</h3><button class="btn-ghost" onclick="closeModal()" aria-label="Close"><i class="fas fa-times"></i></button></div>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg" id="modalTitle" data-t="addNewAsset">Add New Asset</h3><button class="btn-ghost" onclick="closeModal()" aria-label="Close"><i class="fas fa-times"></i></button></div>
     <form id="assetForm" class="px-6 py-5" onsubmit="handleFormSubmit(event)">
       <input type="hidden" id="editId" value="">
-      <div class="section-title">General Information</div>
+      <div class="section-title" data-t="generalInfo">General Information</div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fCode">Asset Code <span class="required">*</span></label><input type="text" class="form-input" id="fCode" placeholder="e.g. IT-2024-0001"><div class="form-error" id="fCodeErr">Asset code is required</div></div>
-        <div class="form-group"><label class="form-label" for="fName">Asset Name</label><input type="text" class="form-input" id="fName" placeholder="e.g. Dell Latitude 5540"></div>
-        <div class="form-group"><label class="form-label" for="fType">Type</label><input type="text" class="form-input" id="fType" placeholder="Search or type custom..." list="dlType" autocomplete="off"></div>
-        <div class="form-group"><label class="form-label" for="fSerial">Serial Number</label><input type="text" class="form-input" id="fSerial" placeholder="e.g. SN-2024-00123"><div class="form-error" id="fSerialErr">This serial number already exists</div></div>
+        <div class="form-group"><label class="form-label" for="fCode"><span data-t="assetCode">Asset Code</span> <span class="required">*</span></label><input type="text" class="form-input" id="fCode" placeholder="e.g. IT-2024-0001"><div class="form-error" id="fCodeErr" data-t="codeReq">Asset code is required</div></div>
+        <div class="form-group"><label class="form-label" for="fName" data-t="assetName">Asset Name</label><input type="text" class="form-input" id="fName" placeholder="e.g. Dell Latitude 5540"></div>
+        <div class="form-group"><label class="form-label" for="fType" data-t="type">Type</label><input type="text" class="form-input" id="fType" list="dlType" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fSerial" data-t="serialNum">Serial Number</label><input type="text" class="form-input" id="fSerial"><div class="form-error" id="fSerialErr" data-t="serialExists">This serial number already exists</div></div>
       </div>
-      <div class="section-title mt-4">Assignment & Location</div>
+      <div class="section-title mt-4" data-t="assignLoc">Assignment & Location</div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fLocation">Location / Branch</label><input type="text" class="form-input" id="fLocation" placeholder="Select or type..." list="dlLocation" autocomplete="off"></div>
-        <div class="form-group"><label class="form-label" for="fDepartment">Department</label><input type="text" class="form-input" id="fDepartment" placeholder="Select or type..." list="dlDepartment" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fLocation" data-t="location">Location / Branch</label><input type="text" class="form-input" id="fLocation" list="dlLocation" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fDepartment" data-t="department">Department</label><input type="text" class="form-input" id="fDepartment" list="dlDepartment" autocomplete="off"></div>
       </div>
-      <div class="form-group"><label class="form-label" for="fAssigned">Assigned To</label><input type="text" class="form-input" id="fAssigned" placeholder="Select or type..." list="dlEmployee" autocomplete="off"></div>
-      <div class="section-title mt-4">Financial & Status</div>
+      <div class="form-group"><label class="form-label" for="fAssigned" data-t="assignedTo">Assigned To</label><input type="text" class="form-input" id="fAssigned" list="dlEmployee" autocomplete="off"></div>
+      <div class="section-title mt-4" data-t="finStatus">Financial & Status</div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fCondition">Condition</label><select class="form-select" id="fCondition"><option value=""></option><option value="New">New</option><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option><option value="Poor">Poor</option><option value="Out of Service">Out of Service</option></select></div>
-        <div class="form-group"><label class="form-label" for="fCost">Purchase Cost ($)</label><input type="number" step="0.01" min="0" class="form-input" id="fCost" placeholder="e.g. 1299.99"></div>
-        <div class="form-group"><label class="form-label" for="fPurchaseDate">Purchase Date</label><input type="date" class="form-input" id="fPurchaseDate" onchange="updateAgePreview()"></div>
+        <div class="form-group"><label class="form-label" for="fCondition" data-t="condition">Condition</label><select class="form-select" id="fCondition"><option value=""></option><option value="New">New</option><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Fair">Fair</option><option value="Poor">Poor</option><option value="Out of Service">Out of Service</option></select></div>
+        <div class="form-group"><label class="form-label" for="fCost" data-t="purchaseCost">Purchase Cost ($)</label><input type="number" step="0.01" min="0" class="form-input" id="fCost"></div>
+        <div class="form-group"><label class="form-label" for="fPurchaseDate" data-t="purchaseDate">Purchase Date</label><input type="date" class="form-input" id="fPurchaseDate" onchange="updateAgePreview()"></div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fWarranty">Warranty Expiry</label><input type="date" class="form-input" id="fWarranty"></div>
-        <div class="form-group"><label class="form-label">Asset Age</label><div class="form-input flex items-center gap-2" style="cursor:default;background:var(--surface)"><i class="fas fa-clock text-muted text-xs"></i><span class="text-sm" id="ageText" style="color:var(--muted)">Set purchase date to calculate</span></div></div>
+        <div class="form-group"><label class="form-label" for="fWarranty" data-t="warrantyExpiry">Warranty Expiry</label><input type="date" class="form-input" id="fWarranty"></div>
+        <div class="form-group"><label class="form-label" data-t="assetAge">Asset Age</label><div class="form-input flex items-center gap-2" style="cursor:default"><i class="fas fa-clock text-muted text-xs"></i><span class="text-sm" id="ageText" style="color:var(--muted)" data-t="setDateCalc">Set purchase date to calculate</span></div></div>
       </div>
-      <div class="section-title mt-4">Hardware Specifications</div>
+      <div class="section-title mt-4" data-t="hwSpecs">Hardware Specifications</div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fManufacturer">Manufacturer</label><input type="text" class="form-input" id="fManufacturer" placeholder="Search or type..." list="dlManufacturer" autocomplete="off"></div>
-        <div class="form-group"><label class="form-label" for="fModel">Model</label><input type="text" class="form-input" id="fModel" placeholder="e.g. Latitude 5540" list="dlModel" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fManufacturer" data-t="manufacturer">Manufacturer</label><input type="text" class="form-input" id="fManufacturer" list="dlManufacturer" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fModel">Model</label><input type="text" class="form-input" id="fModel" list="dlModel" autocomplete="off"></div>
       </div>
-      <div class="form-group"><label class="form-label" for="fProcessor">Processor (CPU)</label><input type="text" class="form-input" id="fProcessor" placeholder="Search or type..." list="dlProcessor" autocomplete="off"></div>
+      <div class="form-group"><label class="form-label" for="fProcessor" data-t="processor">Processor (CPU)</label><input type="text" class="form-input" id="fProcessor" list="dlProcessor" autocomplete="off"></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fRAM">RAM</label><input type="text" class="form-input" id="fRAM" placeholder="e.g. 32GB DDR5-4800" list="dlRAM" autocomplete="off"></div>
-        <div class="form-group"><label class="form-label" for="fGPU">Graphics Card (GPU)</label><input type="text" class="form-input" id="fGPU" placeholder="Search or type..." list="dlGPU" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fRAM">RAM</label><input type="text" class="form-input" id="fRAM" list="dlRAM" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fGPU" data-t="gpu">Graphics Card (GPU)</label><input type="text" class="form-input" id="fGPU" list="dlGPU" autocomplete="off"></div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-        <div class="form-group"><label class="form-label" for="fSSD">SSD Storage</label><input type="text" class="form-input" id="fSSD" placeholder="e.g. 512GB NVMe" list="dlSSD" autocomplete="off"></div>
-        <div class="form-group"><label class="form-label" for="fHDD">HDD Storage</label><input type="text" class="form-input" id="fHDD" placeholder="e.g. 1TB 7200RPM" list="dlHDD" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fSSD">SSD Storage</label><input type="text" class="form-input" id="fSSD" list="dlSSD" autocomplete="off"></div>
+        <div class="form-group"><label class="form-label" for="fHDD">HDD Storage</label><input type="text" class="form-input" id="fHDD" list="dlHDD" autocomplete="off"></div>
       </div>
-      <div class="form-group"><label class="form-label" for="fMAC">MAC Address</label><input type="text" class="form-input" id="fMAC" placeholder="e.g. AA:BB:CC:DD:EE:FF"><div class="form-error" id="fMACErr">This MAC address already exists</div></div>
-      <div class="form-group"><label class="form-label" for="fSpecs">Additional Specifications</label><textarea class="form-textarea" id="fSpecs" placeholder="Any extra specs..." rows="2"></textarea></div>
-      <div class="form-group"><label class="form-label" for="fNotes">Notes</label><textarea class="form-textarea" id="fNotes" placeholder="Repair history, comments..." rows="2"></textarea></div>
-      <div class="flex justify-end gap-3 pt-3 pb-1"><button type="button" class="btn-outline" onclick="closeModal()">Cancel</button><button type="submit" class="btn-primary" id="submitBtn"><i class="fas fa-check text-xs"></i> Save Asset</button></div>
+      <div class="form-group"><label class="form-label" for="fMAC">MAC Address</label><input type="text" class="form-input" id="fMAC"><div class="form-error" id="fMACErr" data-t="macExists">This MAC address already exists</div></div>
+      <div class="form-group"><label class="form-label" for="fSpecs" data-t="addSpecs">Additional Specifications</label><textarea class="form-textarea" id="fSpecs" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label" for="fNotes" data-t="notes">Notes</label><textarea class="form-textarea" id="fNotes" rows="2"></textarea></div>
+      <div class="flex justify-end gap-3 pt-3 pb-1"><button type="button" class="btn-outline" onclick="closeModal()" data-t="cancel">Cancel</button><button type="submit" class="btn-primary" id="submitBtn"><i class="fas fa-check text-xs"></i> <span data-t="saveAsset">Save Asset</span></button></div>
     </form>
   </div>
 </div>
 
-<!-- Detail View Modal -->
-<div class="modal-overlay" id="detailModal"><div class="modal-content detail-modal-content"><div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg" id="detailTitle">Asset Details</h3><button class="btn-ghost" onclick="closeDetail()" aria-label="Close"><i class="fas fa-times"></i></button></div><div class="px-6 py-5" id="detailBody"></div></div></div>
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal"><div class="modal-content detail-modal-content"><div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg" id="detailTitle" data-t="assetDetails">Asset Details</h3><button class="btn-ghost" onclick="closeDetail()"><i class="fas fa-times"></i></button></div><div class="px-6 py-5" id="detailBody"></div></div></div>
 
-<!-- Import Modal -->
+<!-- Import Assets Modal -->
 <div class="modal-overlay" id="importModal">
   <div class="modal-content" style="max-width:960px">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg"><i class="fas fa-file-import mr-2 text-accent"></i>Import Assets</h3><button class="btn-ghost" onclick="closeImportModal()" aria-label="Close"><i class="fas fa-times"></i></button></div>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg"><i class="fas fa-file-import mr-2 text-accent"></i> <span data-t="importAssets">Import Assets</span></h3><button class="btn-ghost" onclick="closeImportModal()"><i class="fas fa-times"></i></button></div>
     <div class="px-6 py-5">
-      <!-- Step 1: Upload -->
-      <div id="importStep1">
-        <div class="section-title">Step 1: Select File</div>
-        <div class="drop-zone" id="importDropZone" onclick="document.getElementById('importFileInput').click()">
-          <i class="fas fa-cloud-upload-alt text-4xl text-muted mb-3 block"></i>
-          <p class="text-fg font-medium mb-1">Click to browse or drag and drop</p>
-          <p class="text-muted text-sm mb-3">Supports <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong> files</p>
-          <p class="text-xs text-muted">Tip: use "Download Template" to get a correctly formatted CSV</p>
-          <input type="file" id="importFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleImportFile(this.files)">
-        </div>
-      </div>
-      <!-- Step 2: Preview -->
+      <div id="importStep1"><div class="section-title" data-t="step1Select">Step 1: Select File</div><div class="drop-zone" id="importDropZone" onclick="document.getElementById('importFileInput').click()"><i class="fas fa-cloud-upload-alt text-4xl text-muted mb-3 block"></i><p class="text-fg font-medium mb-1" data-t="clickBrowse">Click to browse or drag and drop</p><p class="text-muted text-sm mb-3" data-t="supportsFiles">Supports .csv, .xlsx, .xls files</p><p class="text-xs text-muted" data-t="templateTip">Tip: use "Download Template" to get a correctly formatted CSV</p><input type="file" id="importFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleImportFile(this.files)"></div></div>
       <div id="importStep2" style="display:none">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <div>
-            <div class="section-title mb-0 pb-0 border-0">Step 2: Preview & Confirm</div>
-            <p class="text-xs text-muted mt-1" id="importFileInfo"></p>
-          </div>
-          <button class="btn-ghost text-xs whitespace-nowrap" onclick="resetImport()"><i class="fas fa-redo mr-1"></i>Choose Different File</button>
-        </div>
-        <!-- Options -->
-        <div class="flex flex-wrap gap-4 mb-4 p-3 rounded-lg" style="background:var(--surface)">
-          <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
-            <input type="checkbox" id="importSkipCode" checked style="accent-color:var(--accent)"> Skip if Asset Code exists
-          </label>
-          <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
-            <input type="checkbox" id="importSkipSerial" checked style="accent-color:var(--accent)"> Skip if Serial Number exists
-          </label>
-        </div>
-        <!-- Column mapping info -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4"><div><div class="section-title mb-0 pb-0 border-0" data-t="step2Preview">Step 2: Preview & Confirm</div><p class="text-xs text-muted mt-1" id="importFileInfo"></p></div><button class="btn-ghost text-xs whitespace-nowrap" onclick="resetImport()"><i class="fas fa-redo mr-1"></i> <span data-t="chooseDiff">Choose Different File</span></button></div>
+        <div class="flex flex-wrap gap-4 mb-4 p-3 rounded-lg" style="background:var(--surface)"><label class="flex items-center gap-2 text-sm cursor-pointer select-none"><input type="checkbox" id="importSkipCode" checked style="accent-color:var(--accent)"> <span data-t="skipCode">Skip if Asset Code exists</span></label><label class="flex items-center gap-2 text-sm cursor-pointer select-none"><input type="checkbox" id="importSkipSerial" checked style="accent-color:var(--accent)"> <span data-t="skipSerial">Skip if Serial Number exists</span></label></div>
         <div class="mb-3 text-xs text-muted" id="importMappingInfo"></div>
-        <!-- Preview table -->
         <div class="overflow-x-auto rounded-lg border border-border mb-4" style="max-height:320px;overflow-y:auto" id="importPreviewWrap"></div>
-        <!-- Summary -->
         <div class="flex flex-wrap items-center gap-4 mb-4" id="importSummary"></div>
-        <div class="flex justify-end gap-3">
-          <button class="btn-outline" onclick="closeImportModal()">Cancel</button>
-          <button class="btn-primary" id="importConfirmBtn" onclick="executeImport()"><i class="fas fa-file-import text-xs"></i> Import <span id="importCountBtn">0</span> Assets</button>
-        </div>
+        <div class="flex justify-end gap-3"><button class="btn-outline" onclick="closeImportModal()" data-t="cancel">Cancel</button><button class="btn-primary" id="importConfirmBtn" onclick="executeImport()"><i class="fas fa-file-import text-xs"></i> <span data-t="import">Import</span> <span id="importCountBtn">0</span> <span data-t="assets">Assets</span></button></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Delete / Reset Confirmation -->
-<div class="confirm-overlay" id="confirmModal"><div class="bg-card border border-border rounded-2xl p-6 w-[95%] max-w-[400px] text-center" style="transform:scale(.95);transition:transform .25s" id="confirmBox"><div class="w-14 h-14 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4"><i class="fas fa-trash-alt text-danger text-xl"></i></div><h4 class="font-heading font-bold text-fg text-lg mb-2" id="confirmTitle">Delete</h4><p class="text-muted text-sm mb-6" id="confirmText"></p><div class="flex justify-center gap-3"><button class="btn-outline" onclick="closeConfirm()">Cancel</button><button class="btn-primary" style="background:#ef4444" id="confirmDeleteBtn" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><i class="fas fa-trash text-xs"></i> Delete</button></div></div></div>
+<!-- Import Employees Modal -->
+<div class="modal-overlay" id="empImportModal">
+  <div class="modal-content" style="max-width:600px">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border sticky top-0 bg-card z-10 rounded-t-2xl"><h3 class="font-heading font-bold text-fg text-lg"><i class="fas fa-user-plus mr-2 text-accent"></i> <span data-t="importEmployees">Import Employees</span></h3><button class="btn-ghost" onclick="closeEmpImportModal()"><i class="fas fa-times"></i></button></div>
+    <div class="px-6 py-5">
+      <div id="empImportStep1"><div class="drop-zone" id="empImportDropZone" onclick="document.getElementById('empImportFileInput').click()"><i class="fas fa-cloud-upload-alt text-4xl text-muted mb-3 block"></i><p class="text-fg font-medium mb-1" data-t="clickBrowse">Click to browse or drag and drop</p><p class="text-muted text-sm" data-t="supportsFiles">Supports .csv, .xlsx, .xls files</p><p class="text-xs text-muted" data-t="empImportTip">First column should contain employee names. Duplicates will be skipped.</p><input type="file" id="empImportFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleEmpImportFile(this.files)"></div></div>
+      <div id="empImportStep2" style="display:none">
+        <div class="flex items-center justify-between mb-4"><p class="text-sm text-muted" id="empImportFileInfo"></p><button class="btn-ghost text-xs" onclick="resetEmpImport()"><i class="fas fa-redo mr-1"></i> <span data-t="chooseDiff">Choose Different File</span></button></div>
+        <div class="overflow-x-auto rounded-lg border border-border mb-4" style="max-height:300px;overflow-y:auto" id="empImportPreviewWrap"></div>
+        <div class="flex flex-wrap items-center gap-4 mb-4" id="empImportSummary"></div>
+        <div class="flex justify-end gap-3"><button class="btn-outline" onclick="closeEmpImportModal()" data-t="cancel">Cancel</button><button class="btn-primary" id="empImportConfirmBtn" onclick="executeEmpImport()"><i class="fas fa-user-plus text-xs"></i> <span data-t="import">Import</span> <span id="empImportCountBtn">0</span> <span data-t="employees">Employees</span></button></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- Datalist elements -->
-<datalist id="dlType"></datalist>
-<datalist id="dlManufacturer"></datalist>
-<datalist id="dlModel"></datalist>
-<datalist id="dlProcessor"></datalist>
-<datalist id="dlGPU"></datalist>
-<datalist id="dlRAM"></datalist>
-<datalist id="dlSSD"></datalist>
-<datalist id="dlHDD"></datalist>
-<datalist id="dlLocation"></datalist>
-<datalist id="dlDepartment"></datalist>
-<datalist id="dlEmployee"></datalist>
+<!-- Confirm Modal -->
+<div class="confirm-overlay" id="confirmModal"><div class="bg-card border border-border rounded-2xl p-6 w-[95%] max-w-[400px] text-center" style="transform:scale(.95);transition:transform .25s" id="confirmBox"><div class="w-14 h-14 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4"><i class="fas fa-trash-alt text-danger text-xl"></i></div><h4 class="font-heading font-bold text-fg text-lg mb-2" id="confirmTitle">Delete</h4><p class="text-muted text-sm mb-6" id="confirmText"></p><div class="flex justify-center gap-3"><button class="btn-outline" onclick="closeConfirm()" data-t="cancel">Cancel</button><button class="btn-primary" style="background:#ef4444" id="confirmDeleteBtn" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'"><i class="fas fa-trash text-xs"></i> <span data-t="delete">Delete</span></button></div></div></div>
+
+<datalist id="dlType"></datalist><datalist id="dlManufacturer"></datalist><datalist id="dlModel"></datalist><datalist id="dlProcessor"></datalist><datalist id="dlGPU"></datalist><datalist id="dlRAM"></datalist><datalist id="dlSSD"></datalist><datalist id="dlHDD"></datalist><datalist id="dlLocation"></datalist><datalist id="dlDepartment"></datalist><datalist id="dlEmployee"></datalist>
 
 <script>
 // ============================================================
-//  STORAGE ABSTRACTION
+//  i18n — Arabic / English
 // ============================================================
-var _memStore={};
-var _localStorageAvailable=null;
-function _testLocalStorage(){if(_localStorageAvailable!==null)return _localStorageAvailable;try{var k='_av_t_'+Date.now();localStorage.setItem(k,'1');localStorage.removeItem(k);_localStorageAvailable=true}catch(e){_localStorageAvailable=false}return _localStorageAvailable}
-function storeGet(key){if(_testLocalStorage()){try{return localStorage.getItem(key)}catch(e){}}return _memStore.hasOwnProperty(key)?_memStore[key]:null}
-function storeSet(key,value){if(_testLocalStorage()){try{localStorage.setItem(key,value);return}catch(e){}}_memStore[key]=value}
-function storeRemove(key){if(_testLocalStorage()){try{localStorage.removeItem(key);return}catch(e){}}delete _memStore[key]}
-function storeClear(keys){for(var i=0;i<keys.length;i++)storeRemove(keys[i])}
-function isPersistenceAvailable(){return _testLocalStorage()}
+var currentLang = localStorage.getItem('buna_lang') || 'en';
+var T = {
+  en:{
+    sidebarSubtitle:'IT Asset Management',navDashboard:'Dashboard',navAssets:'All Assets',navLists:'Manage Lists',navAdd:'Add Asset',
+    resetAll:'Reset All Data',systemOnline:'System Online',dashboard:'Dashboard',dashboardDesc:'Overview of your IT asset inventory',
+    exportCSV:'Export CSV',downloadTemplate:'Download Template',importAssets:'Import Assets',deleteAll:'Delete All Assets',
+    recentAssets:'Recently Added Assets',viewAll:'View All',byType:'Assets by Type',byLocation:'Assets by Location',byCondition:'Condition Overview',
+    allAssets:'All Assets',export:'Export',template:'Template',addAsset:'Add Asset',search:'Search...',allTypes:'All Types',allConditions:'All Conditions',allDepts:'All Departments',allLocs:'All Locations',
+    manageLists:'Manage Lists',manageListsDesc:'Click any name to edit it inline. Use buttons to add, import, or export.',
+    departments:'Departments',locations:'Locations / Branches',employees:'Employees / Offices',
+    deptPh:'e.g. Marketing',locPh:'e.g. London Office',empPh:'e.g. John Smith',
+    exportEmp:'Export',importEmp:'Import',importEmployees:'Import Employees',
+    empImportTip:'First column should contain employee names. Duplicates will be skipped.',
+    generalInfo:'General Information',assetCode:'Asset Code',assetName:'Asset Name',type:'Type',serialNum:'Serial Number',codeReq:'Asset code is required',serialExists:'This serial number already exists',
+    assignLoc:'Assignment & Location',location:'Location / Branch',department:'Department',assignedTo:'Assigned To',
+    finStatus:'Financial & Status',condition:'Condition',purchaseCost:'Purchase Cost ($)',purchaseDate:'Purchase Date',warrantyExpiry:'Warranty Expiry',assetAge:'Asset Age',setDateCalc:'Set purchase date to calculate',
+    hwSpecs:'Hardware Specifications',manufacturer:'Manufacturer',processor:'Processor (CPU)',gpu:'Graphics Card (GPU)',addSpecs:'Additional Specifications',notes:'Notes',macExists:'This MAC address already exists',
+    cancel:'Cancel',saveAsset:'Save Asset',updateAsset:'Update Asset',addNewAsset:'Add New Asset',editAsset:'Edit Asset',assetDetails:'Asset Details',
+    step1Select:'Step 1: Select File',clickBrowse:'Click to browse or drag and drop',supportsFiles:'Supports .csv, .xlsx, .xls files',templateTip:'Tip: use "Download Template" to get a correctly formatted CSV',
+    step2Preview:'Step 2: Preview & Confirm',chooseDiff:'Choose Different File',skipCode:'Skip if Asset Code exists',skipSerial:'Skip if Serial Number exists',import:'Import',assets:'Assets',
+    delete:'Delete',noAssets:'No assets yet',noMatch:'No assets match your filters',noItems:'No items yet. Add one above.',
+    totalAssets:'Total Assets',totalValue:'Total Value',assetTypes:'Asset Types',avgAge:'Avg Age',warrantyAlerts:'Warranty Alerts',actionNeeded:'Action needed',
+    assetAdded:'Asset added successfully',assetUpdated:'Asset updated successfully',assetDeleted:'Asset deleted successfully',allDeleted:'All assets deleted',resetDone:'All data has been reset to defaults',
+    added:'Added',removed:'Removed',exists:'This item already exists',empExported:'Employee list exported',empImported:'employees imported successfully',
+    templateDownloaded:'Template downloaded. Fill it and import back.',exportedCount:'assets exported to CSV',noExport:'No assets to export',noEmpExport:'No employees to export',
+    deleteConfirm:'Are you sure you want to delete',cannotUndo:'This action cannot be undone.',deleteAllConfirm:'This will permanently delete all',assetsWord:'assets',keepLists:'Departments, locations, and employees lists will be kept.',
+    resetConfirm:'This will delete everything (assets, lists, history) and restore sample data. Are you sure?',
+    month:'month',months:'months',year:'year',years:'years',lessThanMonth:'Less than 1 month',noWarranty:'No warranty',expiredAgo:'Expired',moLeft:'mo left',
+    name:'Name',code:'Code',serial:'Serial',loc:'Location',dept:'Department',assigned:'Assigned To',cond:'Condition',cost:'Cost',purchased:'Purchased',warranty:'Warranty',actions:'Actions',status:'Status',new:'New',skip:'Skip',error:'Error',noCode:'No code',
+    fileEmpty:'File is empty or has no data rows',readFailed:'Failed to read Excel file',unsupported:'Unsupported file type. Use .csv, .xlsx, or .xls',
+    detectedCols:'Detected column mappings:',noHeaders:'No recognized column headers found. Make sure your file has headers like:',newCount:'New',skipCount:'Skipped (duplicate)',errorCount:'Error (no code)',
+    editName:'Edit name',save:'Save'
+  },
+  ar:{
+    sidebarSubtitle:'إدارة أصول تكنولوجيا المعلومات',navDashboard:'لوحة التحكم',navAssets:'جميع الأصول',navLists:'إدارة القوائم',navAdd:'إضافة أصل',
+    resetAll:'إعادة تعيين جميع البيانات',systemOnline:'النظام متصل',dashboard:'لوحة التحكم',dashboardDesc:'نظرة عامة على مخزون أصول تكنولوجيا المعلومات الخاص بك',
+    exportCSV:'تصدير CSV',downloadTemplate:'تحميل القالب',importAssets:'استيراد الأصول',deleteAll:'حذف جميع الأصول',
+    recentAssets:'الأصول المضافة مؤخراً',viewAll:'عرض الكل',byType:'الأصول حسب النوع',byLocation:'الأصول حسب الموقع',byCondition:'نظرة عامة على الحالة',
+    allAssets:'جميع الأصول',export:'تصدير',template:'قالب',addAsset:'إضافة أصل',search:'بحث...',allTypes:'جميع الأنواع',allConditions:'جميع الحالات',allDepts:'جميع الأقسام',allLocs:'جميع المواقع',
+    manageLists:'إدارة القوائم',manageListsDesc:'انقر على أي اسم لتعديله مباشرة. استخدم الأزرار للإضافة أو الاستيراد أو التصدير.',
+    departments:'الأقسام',locations:'المواقع / الفروع',employees:'الموظفون / المكاتب',
+    deptPh:'مثال: التسويق',locPh:'مثال: مكتب لندن',empPh:'مثال: أحمد محمد',
+    exportEmp:'تصدير',importEmp:'استيراد',importEmployees:'استيراد الموظفين',
+    empImportTip:'يجب أن يحتوي العمود الأول على أسماء الموظفين. سيتم تخطي التكرارات.',
+    generalInfo:'المعلومات العامة',assetCode:'كود الأصل',assetName:'اسم الأصل',type:'النوع',serialNum:'الرقم التسلسلي',codeReq:'كود الأصل مطلوب',serialExists:'الرقم التسلسلي موجود مسبقاً',
+    assignLoc:'التخصيص والموقع',location:'الموقع / الفرع',department:'القسم',assignedTo:'مسند إلى',
+    finStatus:'المالية والحالة',condition:'الحالة',purchaseCost:'تكلفة الشراء ($)',purchaseDate:'تاريخ الشراء',warrantyExpiry:'انتهاء الضمان',assetAge:'عمر الأصل',setDateCalc:'حدد تاريخ الشراء للحساب',
+    hwSpecs:'المواصفات Hardware',manufacturer:'الشركة المصنعة',processor:'المعالج (CPU)',gpu:'كرت الشاشة (GPU)',addSpecs:'مواصفات إضافية',notes:'ملاحظات',macExists:'عنوان MAC موجود مسبقاً',
+    cancel:'إلغاء',saveAsset:'حفظ الأصل',updateAsset:'تحديث الأصل',addNewAsset:'إضافة أصل جديد',editAsset:'تعديل الأصل',assetDetails:'تفاصيل الأصل',
+    step1Select:'الخطوة 1: اختر ملف',clickBrowse:'انقر للتصفح أو اسحب وأفلت',supportsFiles:'يدعم ملفات .csv, .xlsx, .xls',templateTip:'نصيحة: استخدم "تحميل القالب" للحصول على CSV بصيغة صحيحة',
+    step2Preview:'الخطوة 2: معاينة وتأكيد',chooseDiff:'اختر ملف مختلف',skipCode:'تخطي إذا كان كود الأصل موجوداً',skipSerial:'تخطي إذا كان الرقم التسلسلي موجوداً',import:'استيراد',assets:'أصول',
+    delete:'حذف',noAssets:'لا توجد أصول بعد',noMatch:'لا توجد أصول تطابق عوامل التصفية',noItems:'لا توجد عناصر بعد. أضف واحداً أعلاه.',
+    totalAssets:'إجمالي الأصول',totalValue:'القيمة الإجمالية',assetTypes:'أنواع الأصول',avgAge:'متوسط العمر',warrantyAlerts:'تنبيهات الضمان',actionNeeded:'إجراء مطلوب',
+    assetAdded:'تمت إضافة الأصل بنجاح',assetUpdated:'تم تحديث الأصل بنجاح',assetDeleted:'تم حذف الأصل بنجاح',allDeleted:'تم حذف جميع الأصول',resetDone:'تم إعادة تعيين جميع البيانات إلى الافتراضية',
+    added:'تمت الإضافة',removed:'تمت الإزالة',exists:'هذا العنصر موجود مسبقاً',empExported:'تم تصدير قائمة الموظفين',empImported:'تم استيراد الموظفين بنجاح',
+    templateDownloaded:'تم تحميل القالب. املأه واستورده مرة أخرى.',exportedCount:'أصل تم تصديره إلى CSV',noExport:'لا توجد أصول للتصدير',noEmpExport:'لا يوجد موظفون للتصدير',
+    deleteConfirm:'هل أنت متأكد أنك تريد حذف',cannotUndo:'لا يمكن التراجع عن هذا الإجراء.',deleteAllConfirm:'سيتم حذف جميع',assetsWord:'الأصول نهائياً',keepLists:'سيتم الاحتفاظ بقوائم الأقسام والمواقع والموظفين.',
+    resetConfirm:'سيؤدي هذا إلى حذف كل شيء (أصول، قوائم، سجل) واستعادة البيانات النموذجية. هل أنت متأكد؟',
+    month:'شهر',months:'أشهر',year:'سنة',years:'سنوات',lessThanMonth:'أقل من شهر',noWarranty:'لا يوجد ضمان',expiredAgo:'منتهي منذ',moLeft:'شهر متبقي',
+    name:'الاسم',code:'الكود',serial:'التسلسلي',loc:'الموقع',dept:'القسم',assigned:'مسند إلى',cond:'الحالة',cost:'التكلفة',purchased:'تاريخ الشراء',warranty:'الضمان',actions:'إجراءات',status:'الحالة',new:'جديد',skip:'تخطي',error:'خطأ',noCode:'بدون كود',
+    fileEmpty:'الملف فارغ أو لا يحتوي على بيانات',readFailed:'فشل قراءة ملف Excel',unsupported:'نوع ملف غير مدعوم. استخدم .csv أو .xlsx أو .xls',
+    detectedCols:'عمود التعيينات المكتشفة:',noHeaders:'لم يتم العثور على رؤوس أعمدة معروفة. تأكد أن ملفك يحتوي على رؤوس مثل:',newCount:'جديد',skipCount:'مخطي (مكرر)',errorCount:'خطأ (بدون كود)',
+    editName:'تعديل الاسم',save:'حفظ'
+  }
+};
+function t(key){return (T[currentLang]&&T[currentLang][key])||T.en[key]||key}
+function toggleLang(){
+  currentLang=currentLang==='en'?'ar':'en';
+  localStorage.setItem('buna_lang',currentLang);
+  applyLang();
+  renderCurrentView();
+}
+function applyLang(){
+  var html=document.documentElement;
+  html.setAttribute('dir',currentLang==='ar'?'rtl':'ltr');
+  html.setAttribute('lang',currentLang);
+  document.getElementById('langLabel').textContent=currentLang==='ar'?'English':'العربية';
+  document.querySelectorAll('[data-t]').forEach(function(el){el.textContent=t(el.getAttribute('data-t'))});
+  document.querySelectorAll('[data-t-ph]').forEach(function(el){el.placeholder=t(el.getAttribute('data-t-ph'))});
+}
+applyLang();
 
 // ============================================================
-//  CONSTANTS & PRESETS
+//  STORAGE
 // ============================================================
-var STORAGE_KEY='assetvault_v12',LISTS_KEY='assetvault_lists_v12',HISTORY_KEY='assetvault_history_v12';
+var _memStore={},_lsOk=null;
+function _testLS(){if(_lsOk!==null)return _lsOk;try{var k='_t_'+Date.now();localStorage.setItem(k,'1');localStorage.removeItem(k);_lsOk=true}catch(e){_lsOk=false}return _lsOk}
+function sGet(k){if(_testLS()){try{return localStorage.getItem(k)}catch(e){}}return _memStore[k]||null}
+function sSet(k,v){if(_testLS()){try{localStorage.setItem(k,v);return}catch(e){}}_memStore[k]=v}
+function sRm(k){if(_testLS()){try{localStorage.removeItem(k);return}catch(e){}}delete _memStore[k]}
+function sClear(ks){for(var i=0;i<ks.length;i++)sRm(ks[i])}
+
+var SK='buna_assets_v2',LK='buna_lists_v2',HK='buna_history_v2';
+
+// ============================================================
+//  PRESETS
+// ============================================================
 var COND_CLS={New:'cond-new',Excellent:'cond-excellent',Good:'cond-good',Fair:'cond-fair',Poor:'cond-poor','Out of Service':'cond-oos'};
 var COND_ICO={New:'fa-star',Excellent:'fa-thumbs-up',Good:'fa-check-circle',Fair:'fa-exclamation-circle',Poor:'fa-exclamation-triangle','Out of Service':'fa-ban'};
 var TYPE_CLS={Laptop:'badge-laptop',Desktop:'badge-desktop',Workstation:'badge-workstation',Monitor:'badge-monitor',Printer:'badge-printer',Server:'badge-server','Network Equipment':'badge-network',Phone:'badge-phone',Other:'badge-other'};
 var TYPE_ICO={Laptop:'fa-laptop',Desktop:'fa-desktop',Workstation:'fa-microchip',Monitor:'fa-tv',Printer:'fa-print',Server:'fa-server','Network Equipment':'fa-network-wired',Phone:'fa-mobile-alt',Other:'fa-cube'};
-var BAR_COLORS={Laptop:'#e8a630',Desktop:'#38bdf8',Workstation:'#f97316',Monitor:'#a855f7',Printer:'#22c55e',Server:'#ef4444','Network Equipment':'#fbbf24',Phone:'#ec4899',Other:'#6b7280'};
+var BAR_COLORS={Laptop:'#27AE60',Desktop:'#38bdf8',Workstation:'#f97316',Monitor:'#a855f7',Printer:'#22c55e',Server:'#ef4444','Network Equipment':'#fbbf24',Phone:'#ec4899',Other:'#6b7280'};
 var COND_COLORS={New:'#22c55e',Excellent:'#38bdf8',Good:'#14b8a6',Fair:'#eab308',Poor:'#f97316','Out of Service':'#ef4444'};
 var LIST_ICONS={departments:'fa-building',locations:'fa-map-marker-alt',employees:'fa-user'};
-var DL_MAP={dlType:{field:'fType',hwProp:null},dlManufacturer:{field:'fManufacturer',hwProp:'manufacturer'},dlModel:{field:'fModel',hwProp:'model'},dlProcessor:{field:'fProcessor',hwProp:'processor'},dlGPU:{field:'fGPU',hwProp:'gpu'},dlRAM:{field:'fRAM',hwProp:'ram'},dlSSD:{field:'fSSD',hwProp:'ssd'},dlHDD:{field:'fHDD',hwProp:'hdd'},dlLocation:{field:'fLocation',hwProp:null},dlDepartment:{field:'fDepartment',hwProp:null},dlEmployee:{field:'fAssigned',hwProp:null}};
-
-var TYPE_PRESETS=['Laptop','Desktop','Workstation','Server','Monitor','Printer','Network Equipment','Phone','Other','Switch','Router','IP Phone','Access Point','Firewall','UPS','Tablet','Scanner','Projector','Docking Station','Webcam','Headset'];
-var MANUFACTURER_PRESETS=['Dell','HP','Lenovo','Apple','ASUS','Acer','Microsoft','MSI','LG','Samsung','Huawei','Toshiba','Fujitsu','Panasonic','Google','Gigabyte','HPE','Canon','Epson','Brother','Xerox','Ricoh','BenQ','ViewSonic','Philips','NEC','Cisco','Juniper','Arista','Aruba','Ubiquiti','Netgear','TP-Link','D-Link','Fortinet','MikroTik','Polycom','Yealink','Grandstream','Avaya','Xiaomi','OnePlus','Sony','Nokia','Supermicro','Dell EMC','Synology','QNap','APC','Logitech','Jabra','Sennheiser'];
-var PROCESSOR_PRESETS=['Intel Core i3-12100','Intel Core i3-13100','Intel Core i3-14100','Intel Core i5-12400','Intel Core i5-13400','Intel Core i5-14400','Intel Core i5-12500','Intel Core i5-13500','Intel Core i5-14500','Intel Core i5-12450H','Intel Core i5-13450H','Intel Core i5-14450H','Intel Core i7-12700','Intel Core i7-13700','Intel Core i7-14700','Intel Core i7-12650H','Intel Core i7-13650H','Intel Core i7-14650H','Intel Core i7-12700H','Intel Core i7-13700H','Intel Core i7-14700H','Intel Core i9-12900','Intel Core i9-13900','Intel Core i9-14900','Intel Core i9-12900H','Intel Core i9-13900H','Intel Core i9-14900H','Intel Core i9-13980HX','Intel Core i9-14980HX','Intel Xeon W-1255','Intel Xeon W-1355','Intel Xeon W-1455','Intel Xeon Silver 4310','Intel Xeon Silver 4314','Intel Xeon Silver 4316','Intel Xeon Gold 6330','Intel Xeon Gold 6430','Intel Xeon Gold 6530','Intel Xeon Platinum 8360Y','Intel Xeon Platinum 8468','Intel Xeon E-2300','Intel Xeon E-2388','Intel Celeron G6900','Intel Celeron J4125','Apple M1','Apple M1 Pro','Apple M1 Max','Apple M1 Ultra','Apple M2','Apple M2 Pro','Apple M2 Max','Apple M2 Ultra','Apple M3','Apple M3 Pro','Apple M3 Max','Apple M4','Apple M4 Pro','Apple M4 Max','AMD Ryzen 3 3200G','AMD Ryzen 3 4300G','AMD Ryzen 3 5300G','AMD Ryzen 5 3600','AMD Ryzen 5 5500','AMD Ryzen 5 5600','AMD Ryzen 5 5600X','AMD Ryzen 5 5600H','AMD Ryzen 5 6600H','AMD Ryzen 5 7500F','AMD Ryzen 5 8500G','AMD Ryzen 5 8600G','AMD Ryzen 7 5700X','AMD Ryzen 7 5800X','AMD Ryzen 7 5800X3D','AMD Ryzen 7 7700','AMD Ryzen 7 7700X','AMD Ryzen 9 5900X','AMD Ryzen 9 7900X','AMD Ryzen 7 5800H','AMD Ryzen 7 6800H','AMD Ryzen 7 7735HS','AMD Ryzen 7 7840HS','AMD Ryzen 7 7945HX','AMD Ryzen 9 7940HX','AMD Ryzen 9 8945HS','AMD Ryzen 9 8945HX','AMD Ryzen 5 7600','AMD Ryzen 5 8600G','AMD Ryzen 7 7700X','AMD Ryzen 7 7800X3D','AMD Ryzen 7 8700G','AMD Ryzen 9 7900GX','AMD Ryzen 9 9950X','AMD EPYC 7313P','AMD EPYC 7543','AMD EPYC 7713P','AMD EPYC 7763','AMD EPYC 8432P','AMD EPYC 8534P','AMD EPYC 9124','AMD EPYC 9354','AMD EPYC 9452','AMD EPYC 9654'];
-var GPU_PRESETS=['NVIDIA GeForce RTX 3050','NVIDIA GeForce RTX 3060','NVIDIA GeForce RTX 3060 Ti','NVIDIA GeForce RTX 3070','NVIDIA GeForce RTX 3070 Ti','NVIDIA GeForce RTX 3080','NVIDIA GeForce RTX 3080 Ti','NVIDIA GeForce RTX 3090','NVIDIA GeForce RTX 3090 Ti','NVIDIA GeForce RTX 4060','NVIDIA GeForce RTX 4060 Ti','NVIDIA GeForce RTX 4070','NVIDIA GeForce RTX 4070 Ti','NVIDIA GeForce RTX 4070 Super','NVIDIA GeForce RTX 4080','NVIDIA GeForce RTX 4080 Super','NVIDIA GeForce RTX 4090','NVIDIA GeForce RTX 4090 D','NVIDIA GeForce RTX 5070 Ti','NVIDIA GeForce RTX 5080','NVIDIA GeForce RTX 5090','NVIDIA RTX A1000','NVIDIA RTX A2000','NVIDIA RTX A3000','NVIDIA RTX A4000','NVIDIA RTX A4500','NVIDIA RTX A5000','NVIDIA RTX A6000','NVIDIA RTX 4000 Ada','NVIDIA RTX 5000 Ada','NVIDIA RTX 6000 Ada','AMD Radeon RX 6400','AMD Radeon RX 6500 XT','AMD Radeon RX 6600','AMD Radeon RX 6600 XT','AMD Radeon RX 6700 XT','AMD Radeon RX 6750 XT','AMD Radeon RX 6800','AMD Radeon RX 6800 XT','AMD Radeon RX 6900 XT','AMD Radeon RX 7600','AMD Radeon RX 7600 XT','AMD Radeon RX 7700 XT','AMD Radeon RX 7800 XT','AMD Radeon RX 7900 XTX','AMD Radeon RX 9070 XT','AMD Radeon Pro W5500','AMD Radeon Pro W5700','AMD Radeon Pro W6600','AMD Radeon Pro W6800','AMD Radeon Pro W7900','Intel UHD Graphics 610','Intel UHD Graphics 630','Intel UHD Graphics 730','Intel UHD Graphics 770','Intel Iris Xe','Intel Iris Xe Plus','Intel Iris Xe MAX','Intel Arc A310','Intel Arc A370','Intel Arc A580','Intel Arc A750','Intel Arc A770','Apple M1 GPU','Apple M2 GPU','Apple M3 GPU','Apple M4 GPU'];
-var RAM_PRESETS=['4GB DDR4-2400','8GB DDR4-2666','8GB DDR4-3200','16GB DDR4-3200','16GB DDR5-4800','32GB DDR4-3200','32GB DDR5-4800','32GB DDR5-5600','64GB DDR5-4800','64GB DDR5-5600','64GB DDR5 ECC','128GB DDR5 ECC','16GB LPDDR5','36GB Unified','64GB Unified','96GB Unified','128GB Unified'];
-var SSD_PRESETS=['128GB NVMe PCIe Gen3','128GB NVMe PCIe Gen4','256GB NVMe PCIe Gen3','256GB NVMe PCIe Gen4','256GB NVMe PCIe Gen5','512GB NVMe PCIe Gen3','512GB NVMe PCIe Gen4','512GB NVMe PCIe Gen5','1TB NVMe PCIe Gen3','1TB NVMe PCIe Gen4','1TB NVMe PCIe Gen5','2TB NVMe PCIe Gen4','2TB NVMe PCIe Gen5','4TB NVMe PCIe Gen4'];
-var HDD_PRESETS=['500GB 5400RPM SATA','500GB 7200RPM SATA','1TB 5400RPM SATA','1TB 7200RPM SATA','2TB 5400RPM SATA','2TB 7200RPM SATA','3TB 7200RPM SATA','4TB 7200RPM SATA','6TB 7200RPM SATA','8TB 7200RPM SATA','10TB 7200RPM SAS','14TB 7200RPM SAS'];
-var STATIC_PRESETS={dlType:TYPE_PRESETS,dlManufacturer:MANUFACTURER_PRESETS,dlModel:[],dlProcessor:PROCESSOR_PRESETS,dlGPU:GPU_PRESETS,dlRAM:RAM_PRESETS,dlSSD:SSD_PRESETS,dlHDD:HDD_PRESETS,dlLocation:[],dlDepartment:[],dlEmployee:[]};
-
-// ============================================================
-//  IMPORT — header name to asset field mapping
-// ============================================================
-var HEADER_MAP={
-  'asset code':'code','code':'code',
-  'name':'name','asset name':'name',
-  'type':'type','asset type':'type',
-  'serial':'serial','serial number':'serial',
-  'location':'location','branch':'location',
-  'department':'department','dept':'department',
-  'assigned to':'assignedTo','assigned':'assignedTo','user':'assignedTo','employee':'assignedTo',
-  'condition':'condition','status':'condition',
-  'purchase cost':'cost','cost':'cost','price':'cost',
-  'purchase date':'purchaseDate','date':'purchaseDate',
-  'warranty expiry':'warrantyExpiry','warranty':'warrantyExpiry',
-  'manufacturer':'manufacturer','brand':'manufacturer',
-  'model':'model',
-  'processor':'processor','cpu':'processor',
-  'ram':'ram','memory':'ram',
-  'gpu':'gpu','graphics':'gpu','graphics card':'gpu',
-  'ssd':'ssd','ssd storage':'ssd',
-  'hdd':'hdd','hdd storage':'hdd',
-  'mac address':'macAddress','mac':'macAddress',
-  'additional specs':'specs','specs':'specs','specifications':'specs',
-  'notes':'notes','note':'notes','comment':'notes','comments':'notes'
-};
-
-// Export headers (in order) — used for template + export
-var EXPORT_HEADERS=['Asset Code','Name','Type','Serial Number','Location','Department','Assigned To','Condition','Purchase Cost','Purchase Date','Warranty Expiry','Manufacturer','Model','Processor','RAM','GPU','SSD','HDD','MAC Address','Additional Specs','Notes'];
-var EXPORT_FIELDS=['code','name','type','serial','location','department','assignedTo','condition','cost','purchaseDate','warrantyExpiry','manufacturer','model','processor','ram','gpu','ssd','hdd','macAddress','specs','notes'];
+var DL_MAP={dlType:{f:'fType',h:null},dlManufacturer:{f:'fManufacturer',h:'manufacturer'},dlModel:{f:'fModel',h:'model'},dlProcessor:{f:'fProcessor',h:'processor'},dlGPU:{f:'fGPU',h:'gpu'},dlRAM:{f:'fRAM',h:'ram'},dlSSD:{f:'fSSD',h:'ssd'},dlHDD:{f:'fHDD',h:'hdd'},dlLocation:{f:'fLocation',h:null},dlDepartment:{f:'fDepartment',h:null},dlEmployee:{f:'fAssigned',h:null}};
+var TYPE_P=['Laptop','Desktop','Workstation','Server','Monitor','Printer','Network Equipment','Phone','Other','Switch','Router','IP Phone','Access Point','Firewall','UPS','Tablet','Scanner','Projector','Docking Station','Webcam','Headset'];
+var MFG_P=['Dell','HP','Lenovo','Apple','ASUS','Acer','Microsoft','MSI','LG','Samsung','Huawei','Toshiba','Cisco','Juniper','Ubiquiti','Netgear','TP-Link','Fortinet','MikroTik','HPE','Canon','Epson','Brother','Xerox','Synology','QNap','APC','Logitech'];
+var CPU_P=['Intel Core i3-12100','Intel Core i3-13100','Intel Core i5-12400','Intel Core i5-13400','Intel Core i5-14400','Intel Core i5-12500','Intel Core i5-13500','Intel Core i7-12700','Intel Core i7-13700','Intel Core i7-14700','Intel Core i7-12700H','Intel Core i7-13700H','Intel Core i7-14700H','Intel Core i9-13900','Intel Core i9-14900','Intel Core i9-13900H','Intel Core i9-14980HX','Intel Xeon W-1355','Intel Xeon Silver 4316','Intel Xeon Gold 6430','Apple M1','Apple M2','Apple M3','Apple M3 Pro','Apple M4','Apple M4 Pro','AMD Ryzen 5 5600','AMD Ryzen 5 5600X','AMD Ryzen 5 7600','AMD Ryzen 7 5700X','AMD Ryzen 7 5800X','AMD Ryzen 7 7800X3D','AMD Ryzen 9 7900X','AMD Ryzen 9 9950X','AMD EPYC 9354','AMD EPYC 9654'];
+var GPU_P=['NVIDIA GeForce RTX 3050','NVIDIA GeForce RTX 3060','NVIDIA GeForce RTX 3070','NVIDIA GeForce RTX 3080','NVIDIA GeForce RTX 3090','NVIDIA GeForce RTX 4060','NVIDIA GeForce RTX 4070','NVIDIA GeForce RTX 4070 Super','NVIDIA GeForce RTX 4080 Super','NVIDIA GeForce RTX 4090','NVIDIA GeForce RTX 5070 Ti','NVIDIA GeForce RTX 5080','NVIDIA GeForce RTX 5090','NVIDIA RTX A4000','NVIDIA RTX A5000','NVIDIA RTX A6000','NVIDIA RTX 5000 Ada','AMD Radeon RX 7600','AMD Radeon RX 7800 XT','AMD Radeon RX 7900 XTX','AMD Radeon RX 9070 XT','Intel UHD 770','Intel Iris Xe','Intel Arc A770','Apple M1 GPU','Apple M2 GPU','Apple M3 GPU','Apple M4 GPU'];
+var RAM_P=['4GB DDR4-2400','8GB DDR4-3200','16GB DDR4-3200','16GB DDR5-4800','32GB DDR5-4800','32GB DDR5-5600','64GB DDR5-5600','64GB DDR5 ECC','128GB DDR5 ECC'];
+var SSD_P=['128GB NVMe PCIe Gen4','256GB NVMe PCIe Gen4','512GB NVMe PCIe Gen4','1TB NVMe PCIe Gen4','1TB NVMe PCIe Gen5','2TB NVMe PCIe Gen4','2TB NVMe PCIe Gen5','4TB NVMe PCIe Gen4'];
+var HDD_P=['500GB 7200RPM SATA','1TB 7200RPM SATA','2TB 7200RPM SATA','4TB 7200RPM SATA','8TB 7200RPM SATA','10TB 7200RPM SAS'];
+var SP={dlType:TYPE_P,dlManufacturer:MFG_P,dlModel:[],dlProcessor:CPU_P,dlGPU:GPU_P,dlRAM:RAM_P,dlSSD:SSD_P,dlHDD:HDD_P,dlLocation:[],dlDepartment:[],dlEmployee:[]};
+var HMAP={'asset code':'code','code':'code','name':'name','asset name':'name','type':'type','asset type':'type','serial':'serial','serial number':'serial','location':'location','branch':'location','department':'department','dept':'department','assigned to':'assignedTo','assigned':'assignedTo','user':'assignedTo','employee':'assignedTo','condition':'condition','status':'condition','purchase cost':'cost','cost':'cost','price':'cost','purchase date':'purchaseDate','date':'purchaseDate','warranty expiry':'warrantyExpiry','warranty':'warrantyExpiry','manufacturer':'manufacturer','brand':'manufacturer','model':'model','processor':'processor','cpu':'processor','ram':'ram','memory':'ram','gpu':'gpu','graphics':'gpu','graphics card':'gpu','ssd':'ssd','hdd':'hdd','mac address':'macAddress','mac':'macAddress','additional specs':'specs','specs':'specs','specifications':'specs','notes':'notes','note':'notes','comment':'notes','comments':'notes'};
+var EH=['Asset Code','Name','Type','Serial Number','Location','Department','Assigned To','Condition','Purchase Cost','Purchase Date','Warranty Expiry','Manufacturer','Model','Processor','RAM','GPU','SSD','HDD','MAC Address','Additional Specs','Notes'];
+var EF=['code','name','type','serial','location','department','assignedTo','condition','cost','purchaseDate','warrantyExpiry','manufacturer','model','processor','ram','gpu','ssd','hdd','macAddress','specs','notes'];
 
 // ============================================================
 //  UTILITY
 // ============================================================
-function genId(){return 'a_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36)}
+function gid(){return 'a_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36)}
 function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function fmtCost(c){if(c===null||c===undefined||c==='')return '\u2014';return '$'+Number(c).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function normalizeMAC(m){return (m||'').replace(/[-:\s]/g,'').toUpperCase().trim()}
-function calcAge(ds){if(!ds)return null;var d=new Date(ds),n=new Date(),y=n.getFullYear()-d.getFullYear(),m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate())){y--;m+=12}if(y>0)return y+' year'+(y>1?'s':'')+(m>0?' '+m+' month'+(m>1?'s':''):'');if(m>0)return m+' month'+(m>1?'s':'');return 'Less than 1 month'}
-function warrantyInfo(ds){if(!ds)return {label:'No warranty',cls:'text-muted',icon:'fa-question-circle'};var e=new Date(ds),n=new Date(),d=(e-n)/(864e5*30);if(d<0)return {label:'Expired '+Math.abs(Math.round(d))+'mo ago',cls:'warranty-expired',icon:'fa-times-circle'};if(d<3)return {label:Math.ceil(d)+' mo left',cls:'warranty-warn',icon:'fa-exclamation-triangle'};return {label:Math.ceil(d)+' mo left',cls:'warranty-ok',icon:'fa-check-circle'}}
-function typeBadge(t){if(!t)return '<span class="text-muted text-xs">\u2014</span>';return '<span class="badge '+(TYPE_CLS[t]||'badge-other')+'"><i class="fas '+(TYPE_ICO[t]||'fa-cube')+' text-[10px]"></i>'+esc(t)+'</span>'}
-function condBadge(c){if(!c)return '<span class="text-muted text-xs">\u2014</span>';return '<span class="badge '+(COND_CLS[c]||'badge-other')+'"><i class="fas '+(COND_ICO[c]||'fa-circle')+' text-[10px]"></i>'+c+'</span>'}
-function hwStr(a){if(!a.hardware)return '';var h=a.hardware;return [h.manufacturer,h.model,h.processor,h.ram,h.gpu,h.ssd,h.hdd,h.macAddress].filter(Boolean).join(' ')}
-function specItem(l,v){return '<div class="spec-item"><div class="spec-item-label">'+esc(l)+'</div><div class="spec-item-value">'+(v?esc(v):'\u2014')+'</div></div>'}
+function fc(c){if(c==null||c==='')return '\u2014';return '$'+Number(c).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function nmac(m){return(m||'').replace(/[-:\s]/g,'').toUpperCase().trim()}
+function cAge(ds){if(!ds)return null;var d=new Date(ds),n=new Date(),y=n.getFullYear()-d.getFullYear(),m=n.getMonth()-d.getMonth();if(m<0||(m===0&&n.getDate()<d.getDate())){y--;m+=12}if(y>0)return y+' '+t(y>1?'years':'year')+(m>0?' '+m+' '+t(m>1?'months':'month'):'');if(m>0)return m+' '+t(m>1?'months':'month');return t('lessThanMonth')}
+function wInfo(ds){if(!ds)return{l:t('noWarranty'),c:'text-muted',i:'fa-question-circle'};var e=new Date(ds),n=new Date(),d=(e-n)/(864e5*30);if(d<0)return{l:t('expiredAgo')+' '+Math.abs(Math.round(d))+' '+t('moLeft'),c:'warranty-expired',i:'fa-times-circle'};if(d<3)return{l:Math.ceil(d)+' '+t('moLeft'),c:'warranty-warn',i:'fa-exclamation-triangle'};return{l:Math.ceil(d)+' '+t('moLeft'),c:'warranty-ok',i:'fa-check-circle'}}
+function tBg(tp){if(!tp)return '<span class="text-muted text-xs">\u2014</span>';return '<span class="badge '+(TYPE_CLS[tp]||'badge-other')+'"><i class="fas '+(TYPE_ICO[tp]||'fa-cube')+' text-[10px]"></i>'+esc(tp)+'</span>'}
+function cBg(c){if(!c)return '<span class="text-muted text-xs">\u2014</span>';return '<span class="badge '+(COND_CLS[c]||'badge-other')+'"><i class="fas '+(COND_ICO[c]||'fa-circle')+' text-[10px]"></i>'+c+'</span>'}
+function si(l,v){return '<div class="spec-item"><div class="spec-item-label">'+esc(l)+'</div><div class="spec-item-value">'+(v?esc(v):'\u2014')+'</div></div>'}
+function csvC(v){if(v==null)return '';var s=String(v);if(s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1)return '"'+s.replace(/"/g,'""')+'"';return s}
+function hwS(a){if(!a.hardware)return '';var h=a.hardware;return[h.manufacturer,h.model,h.processor,h.ram,h.gpu,h.ssd,h.hdd,h.macAddress].filter(Boolean).join(' ')}
 
 // ============================================================
 //  FIELD HISTORY
 // ============================================================
-var fieldHistory={};
-function loadFieldHistory(){try{var s=storeGet(HISTORY_KEY);if(s){var p=JSON.parse(s);if(p&&typeof p==='object')return p}}catch(e){}return {}}
-function saveFieldHistory(){try{storeSet(HISTORY_KEY,JSON.stringify(fieldHistory))}catch(e){}}
-function addToHistory(dlId,value){if(!value)return;value=value.trim();if(!value)return;if(!fieldHistory[dlId])fieldHistory[dlId]=[];var lower=value.toLowerCase();for(var i=0;i<fieldHistory[dlId].length;i++){if(fieldHistory[dlId][i].toLowerCase()===lower)return}fieldHistory[dlId].push(value);fieldHistory[dlId].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});saveFieldHistory()}
-function syncHistoryFromAssets(){var hist=loadFieldHistory();for(var dlId in DL_MAP){if(!DL_MAP.hasOwnProperty(dlId))continue;var hwProp=DL_MAP[dlId].hwProp;if(!hwProp)continue;if(!hist[dlId])hist[dlId]=[];for(var i=0;i<assets.length;i++){var hw=assets[i].hardware;if(!hw)continue;var val=hw[hwProp];if(val&&hist[dlId].indexOf(val)===-1)hist[dlId].push(val)}}fieldHistory=hist;saveFieldHistory()}
+var fHist={};
+function lFH(){try{var s=sGet(HK);if(s){var p=JSON.parse(s);if(p&&typeof p==='object')return p}}catch(e){}return {}}
+function sFH(){try{sSet(HK,JSON.stringify(fHist))}catch(e){}}
+function a2H(did,val){if(!val)return;val=val.trim();if(!val)return;if(!fHist[did])fHist[did]=[];var lo=val.toLowerCase();for(var i=0;i<fHist[did].length;i++){if(fHist[did][i].toLowerCase()===lo)return}fHist[did].push(val);fHist[did].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});sFH()}
+function syncHA(){var h=lFH();for(var did in DL_MAP){if(!DL_MAP.hasOwnProperty(did))continue;var hp=DL_MAP[did].h;if(!hp)continue;if(!h[did])h[did]=[];for(var i=0;i<assets.length;i++){var hw=assets[i].hardware;if(!hw)continue;var val=hw[hp];if(val&&h[did].indexOf(val)===-1)h[did].push(val)}}fHist=h;sFH()}
 
 // ============================================================
-//  DATALIST BUILDER
+//  DATALIST
 // ============================================================
-function buildDatalist(dlId,sp){var dl=document.getElementById(dlId);if(!dl)return;var hist=fieldHistory[dlId]||[];var map={};for(var i=0;i<sp.length;i++){map[sp[i].toLowerCase()]=sp[i]}for(var i=0;i<hist.length;i++){map[hist[i].toLowerCase()]=hist[i]}var merged=[];for(var k in map){if(map.hasOwnProperty(k))merged.push(map[k])}merged.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});var html='';for(var i=0;i<merged.length;i++){html+='<option value="'+esc(merged[i])+'"></option>'}dl.innerHTML=html}
-function buildAllDatalists(){for(var dlId in STATIC_PRESETS){if(STATIC_PRESETS.hasOwnProperty(dlId))buildDatalist(dlId,STATIC_PRESETS[dlId])}}
+function bDL(did,sp){var dl=document.getElementById(did);if(!dl)return;var hi=fHist[did]||[];var mp={};for(var i=0;i<sp.length;i++)mp[sp[i].toLowerCase()]=sp[i];for(var i=0;i<hi.length;i++)mp[hi[i].toLowerCase()]=hi[i];var mn=[];for(var k in mp)if(mp.hasOwnProperty(k))mn.push(mp[k]);mn.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});var h='';for(var i=0;i<mn.length;i++)h+='<option value="'+esc(mn[i])+'"></option>';dl.innerHTML=h}
+function bADL(){for(var d in SP)if(SP.hasOwnProperty(d))bDL(d,SP[d])}
 
 // ============================================================
 //  MANAGED LISTS
 // ============================================================
-function loadLists(){try{var s=storeGet(LISTS_KEY);if(s){var p=JSON.parse(s);if(p&&typeof p==='object')return p}}catch(e){}return {departments:[],locations:[],employees:[]}}
-function saveLists(d){try{storeSet(LISTS_KEY,JSON.stringify(d))}catch(e){}}
-function syncListsFromAssets(){var lists=loadLists(),changed=false;for(var i=0;i<assets.length;i++){var a=assets[i];if(a.department&&lists.departments.indexOf(a.department)===-1){lists.departments.push(a.department);changed=true}if(a.location&&lists.locations.indexOf(a.location)===-1){lists.locations.push(a.location);changed=true}if(a.assignedTo&&lists.employees.indexOf(a.assignedTo)===-1){lists.employees.push(a.assignedTo);changed=true}}if(changed){lists.departments.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});lists.locations.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});lists.employees.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});saveLists(lists)}return lists}
-function buildManagedDatalists(){var lists=loadLists();buildDatalist('dlDepartment',lists.departments);buildDatalist('dlLocation',lists.locations);buildDatalist('dlEmployee',lists.employees)}
-function addToListIfNew(listKey,value){if(!value)return;var lists=loadLists(),found=false;for(var i=0;i<lists[listKey].length;i++){if(lists[listKey][i].toLowerCase()===value.toLowerCase()){found=true;break}}if(!found){lists[listKey].push(value);lists[listKey].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});saveLists(lists)}}
+function lL(){try{var s=sGet(LK);if(s){var p=JSON.parse(s);if(p&&typeof p==='object')return p}}catch(e){}return{departments:[],locations:[],employees:[]}}
+function sL(d){try{sSet(LK,JSON.stringify(d))}catch(e){}}
+function syncLA(){var ls=lL(),ch=false;for(var i=0;i<assets.length;i++){var a=assets[i];if(a.department&&ls.departments.indexOf(a.department)===-1){ls.departments.push(a.department);ch=true}if(a.location&&ls.locations.indexOf(a.location)===-1){ls.locations.push(a.location);ch=true}if(a.assignedTo&&ls.employees.indexOf(a.assignedTo)===-1){ls.employees.push(a.assignedTo);ch=true}}if(ch){ls.departments.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});ls.locations.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});ls.employees.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});sL(ls)}return ls}
+function bMDL(){var ls=lL();bDL('dlDepartment',ls.departments);bDL('dlLocation',ls.locations);bDL('dlEmployee',ls.employees)}
+function a2LN(lk,val){if(!val)return;var ls=lL();for(var i=0;i<ls[lk].length;i++){if(ls[lk][i].toLowerCase()===val.toLowerCase())return}ls[lk].push(val);ls[lk].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});sL(ls)}
 
 // ============================================================
-//  SEED DATA
+//  SEED
 // ============================================================
-function createSeedData(){return[
-  {id:genId(),code:'IT-2024-0001',name:'Dell Latitude 5540',type:'Laptop',serial:'DL-5540-2024-001',location:'New York HQ \u2014 Floor 3',department:'Engineering',assignedTo:'Sarah Chen',condition:'Excellent',cost:1499.99,purchaseDate:'2024-01-15',warrantyExpiry:'2027-01-15',specs:'',hardware:{manufacturer:'Dell',model:'Latitude 5540',processor:'Intel Core i7-13700H',ram:'32GB DDR5-4800',gpu:'Intel Iris Xe',ssd:'512GB NVMe PCIe Gen4',hdd:'',macAddress:'AA:1B:2C:3D:4E:5F'},notes:'Primary work laptop.',createdAt:Date.now()-864e5*2},
-  {id:genId(),code:'IT-2024-0002',name:'MacBook Pro 16"',type:'Laptop',serial:'APL-MBP16-045',location:'San Francisco Office',department:'Design',assignedTo:'Marcus Rivera',condition:'New',cost:2499,purchaseDate:'2024-03-10',warrantyExpiry:'2027-03-10',specs:'',hardware:{manufacturer:'Apple',model:'MacBook Pro 16" M3 Pro',processor:'Apple M3 Pro (12-core)',ram:'36GB Unified',gpu:'Apple M3 Pro (18-core)',ssd:'1TB NVMe',hdd:'',macAddress:'BB:2C:3D:4E:5F:60'},notes:'AppleCare+ included.',createdAt:Date.now()-864e5*5},
-  {id:genId(),code:'IT-2023-0015',name:'HP EliteDesk 800 G9',type:'Desktop',serial:'HP-ED800-112',location:'New York HQ \u2014 Floor 2',department:'Accounting',assignedTo:"James O'Brien",condition:'Good',cost:879,purchaseDate:'2023-06-20',warrantyExpiry:'2026-06-20',specs:'',hardware:{manufacturer:'HP',model:'EliteDesk 800 G9 SFF',processor:'Intel Core i5-13500',ram:'16GB DDR5-4800',gpu:'Intel UHD 770',ssd:'256GB NVMe',hdd:'1TB 7200RPM SATA',macAddress:'CC:3D:4E:5F:60:71'},notes:'Dual monitor setup.',createdAt:Date.now()-864e5*7},
-  {id:genId(),code:'IT-2024-0003',name:'Lenovo ThinkStation P360',type:'Workstation',serial:'LN-TS360-008',location:'Data Center \u2014 Room A',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Excellent',cost:3200,purchaseDate:'2024-02-01',warrantyExpiry:'2027-02-01',specs:'',hardware:{manufacturer:'Lenovo',model:'ThinkStation P360',processor:'Intel Xeon W-1355',ram:'64GB DDR5 ECC',gpu:'NVIDIA RTX A4000 16GB',ssd:'1TB NVMe Gen4',hdd:'4TB 7200RPM',macAddress:'DD:4E:5F:60:71:82'},notes:'CAD workstation.',createdAt:Date.now()-864e5*4},
-  {id:genId(),code:'IT-2023-0022',name:'Dell UltraSharp U2723QE',type:'Monitor',serial:'DL-U27-078',location:'New York HQ \u2014 Floor 3',department:'Engineering',assignedTo:'Sarah Chen',condition:'Good',cost:619.99,purchaseDate:'2023-04-12',warrantyExpiry:'2026-04-12',specs:'27" 4K USB-C Hub, IPS Black, HDR400, 70W PD',hardware:null,notes:'',createdAt:Date.now()-864e5*3},
-  {id:genId(),code:'IT-2022-0010',name:'HP LaserJet Pro M404dn',type:'Printer',serial:'HP-LJ-033',location:'New York HQ \u2014 Floor 2',department:'Accounting',assignedTo:'Shared \u2014 Accounting',condition:'Fair',cost:349,purchaseDate:'2022-09-01',warrantyExpiry:'2024-09-01',specs:'Monochrome Laser, 40ppm, Duplex, Ethernet',hardware:null,notes:'Warranty expired.',createdAt:Date.now()-864e5*10},
-  {id:genId(),code:'IT-2023-0005',name:'Dell PowerEdge R750xs',type:'Server',serial:'DL-PE-001',location:'Data Center \u2014 Room A',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Excellent',cost:8500,purchaseDate:'2023-11-15',warrantyExpiry:'2026-11-15',specs:'Dual Xeon Silver 4316, 128GB DDR4, 4x 1.92TB NVMe RAID 10, iDRAC9',hardware:null,notes:'Production DB server.',createdAt:Date.now()-864e5*15},
-  {id:genId(),code:'IT-2023-0008',name:'Cisco Catalyst 9200L',type:'Network Equipment',serial:'CSC-9200-012',location:'Data Center \u2014 Room B',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Good',cost:4200,purchaseDate:'2023-08-20',warrantyExpiry:'2026-08-20',specs:'24-port PoE+ Gigabit, Layer 3, 370W PoE',hardware:null,notes:'Core distribution switch.',createdAt:Date.now()-864e5*12},
-  {id:genId(),code:'IT-2024-0010',name:'iPhone 15 Pro',type:'Phone',serial:'APL-IP15-089',location:'Chicago Branch',department:'Sales',assignedTo:'Lisa Park',condition:'New',cost:1199,purchaseDate:'2024-04-01',warrantyExpiry:'2025-04-01',specs:'256GB, Natural Titanium, iOS 17, MDM Enrolled',hardware:null,notes:'Corporate phone plan.',createdAt:Date.now()-864e5*1},
-  {id:genId(),code:'IT-2021-0003',name:'APC Smart-UPS 3000VA',type:'Other',serial:'APC-SUA-007',location:'Data Center \u2014 Room A',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Poor',cost:1850,purchaseDate:'2021-03-10',warrantyExpiry:'2024-03-10',specs:'3000VA/2700W, Rack-mount 3U, LCD',hardware:null,notes:'Battery replacement recommended.',createdAt:Date.now()-864e5*20}
+function seed(){return[
+{id:gid(),code:'IT-2024-0001',name:'Dell Latitude 5540',type:'Laptop',serial:'DL-5540-001',location:'New York HQ',department:'Engineering',assignedTo:'Sarah Chen',condition:'Excellent',cost:1499.99,purchaseDate:'2024-01-15',warrantyExpiry:'2027-01-15',specs:'',hardware:{manufacturer:'Dell',model:'Latitude 5540',processor:'Intel Core i7-13700H',ram:'32GB DDR5-4800',gpu:'Intel Iris Xe',ssd:'512GB NVMe PCIe Gen4',hdd:'',macAddress:'AA:1B:2C:3D:4E:5F'},notes:'',createdAt:Date.now()-864e5*2},
+{id:gid(),code:'IT-2024-0002',name:'MacBook Pro 16"',type:'Laptop',serial:'APL-MBP16-045',location:'San Francisco Office',department:'Design',assignedTo:'Marcus Rivera',condition:'New',cost:2499,purchaseDate:'2024-03-10',warrantyExpiry:'2027-03-10',specs:'',hardware:{manufacturer:'Apple',model:'MacBook Pro 16" M3 Pro',processor:'Apple M3 Pro',ram:'36GB Unified',gpu:'Apple M3 Pro',ssd:'1TB NVMe',hdd:'',macAddress:'BB:2C:3D:4E:5F:60'},notes:'AppleCare+ included.',createdAt:Date.now()-864e5*5},
+{id:gid(),code:'IT-2023-0015',name:'HP EliteDesk 800 G9',type:'Desktop',serial:'HP-ED800-112',location:'New York HQ',department:'Accounting',assignedTo:"James O'Brien",condition:'Good',cost:879,purchaseDate:'2023-06-20',warrantyExpiry:'2026-06-20',specs:'',hardware:{manufacturer:'HP',model:'EliteDesk 800 G9',processor:'Intel Core i5-13500',ram:'16GB DDR5-4800',gpu:'Intel UHD 770',ssd:'256GB NVMe',hdd:'1TB 7200RPM SATA',macAddress:'CC:3D:4E:5F:60:71'},notes:'',createdAt:Date.now()-864e5*7},
+{id:gid(),code:'IT-2024-0003',name:'Lenovo ThinkStation P360',type:'Workstation',serial:'LN-TS360-008',location:'Data Center',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Excellent',cost:3200,purchaseDate:'2024-02-01',warrantyExpiry:'2027-02-01',specs:'',hardware:{manufacturer:'Lenovo',model:'ThinkStation P360',processor:'Intel Xeon W-1355',ram:'64GB DDR5 ECC',gpu:'NVIDIA RTX A4000 16GB',ssd:'1TB NVMe Gen4',hdd:'4TB 7200RPM',macAddress:'DD:4E:5F:60:71:82'},notes:'',createdAt:Date.now()-864e5*4},
+{id:gid(),code:'IT-2023-0022',name:'Dell UltraSharp U2723QE',type:'Monitor',serial:'DL-U27-078',location:'New York HQ',department:'Engineering',assignedTo:'Sarah Chen',condition:'Good',cost:619.99,purchaseDate:'2023-04-12',warrantyExpiry:'2026-04-12',specs:'27" 4K USB-C Hub',hardware:null,notes:'',createdAt:Date.now()-864e5*3},
+{id:gid(),code:'IT-2022-0010',name:'HP LaserJet Pro M404dn',type:'Printer',serial:'HP-LJ-033',location:'New York HQ',department:'Accounting',assignedTo:'Shared',condition:'Fair',cost:349,purchaseDate:'2022-09-01',warrantyExpiry:'2024-09-01',specs:'Monochrome Laser',hardware:null,notes:'',createdAt:Date.now()-864e5*10},
+{id:gid(),code:'IT-2023-0005',name:'Dell PowerEdge R750xs',type:'Server',serial:'DL-PE-001',location:'Data Center',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Excellent',cost:8500,purchaseDate:'2023-11-15',warrantyExpiry:'2026-11-15',specs:'Dual Xeon Silver 4316',hardware:null,notes:'',createdAt:Date.now()-864e5*15},
+{id:gid(),code:'IT-2023-0008',name:'Cisco Catalyst 9200L',type:'Network Equipment',serial:'CSC-9200-012',location:'Data Center',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Good',cost:4200,purchaseDate:'2023-08-20',warrantyExpiry:'2026-08-20',specs:'24-port PoE+ Gigabit',hardware:null,notes:'',createdAt:Date.now()-864e5*12},
+{id:gid(),code:'IT-2024-0010',name:'iPhone 15 Pro',type:'Phone',serial:'APL-IP15-089',location:'Chicago Branch',department:'Sales',assignedTo:'Lisa Park',condition:'New',cost:1199,purchaseDate:'2024-04-01',warrantyExpiry:'2025-04-01',specs:'256GB, MDM Enrolled',hardware:null,notes:'',createdAt:Date.now()-864e5*1},
+{id:gid(),code:'IT-2021-0003',name:'APC Smart-UPS 3000VA',type:'Other',serial:'APC-SUA-007',location:'Data Center',department:'IT Infrastructure',assignedTo:'Infrastructure Team',condition:'Poor',cost:1850,purchaseDate:'2021-03-10',warrantyExpiry:'2024-03-10',specs:'3000VA/2700W',hardware:null,notes:'',createdAt:Date.now()-864e5*20}
 ]}
 
 // ============================================================
 //  DATA LAYER
 // ============================================================
-function loadAssets(){try{var s=storeGet(STORAGE_KEY);if(s){var p=JSON.parse(s);if(Array.isArray(p)&&p.length>0)return p}}catch(e){}var seed=createSeedData();saveAssets(seed);return seed}
-function saveAssets(d){try{storeSet(STORAGE_KEY,JSON.stringify(d))}catch(e){}}
-function clearAllStorage(){storeClear([STORAGE_KEY,LISTS_KEY,HISTORY_KEY,'assetvault_data','assetvault_data_v2','assetvault_final_v4','assetvault_v3','assetvault_v4','assetvault_v5','assetvault_v6','assetvault_v7','assetvault_v8','assetvault_v9','assetvault_v10','assetvault_v11'])}
-
-var assets=loadAssets(),lastAddedId=null;
-syncListsFromAssets();fieldHistory=loadFieldHistory();syncHistoryFromAssets();
-(function(){var b=document.getElementById('storageBanner');if(!isPersistenceAvailable()){b.style.display='block';b.innerHTML='<div class="storage-banner warn"><i class="fas fa-exclamation-triangle"></i><p><strong>Data won\'t persist after reload.</strong> Your browser blocks local storage when opening the file directly. The app works fully \u2014 use <strong>Export CSV</strong> to back up, or open via a web server for auto-save.</p></div>'}else{b.style.display='none'}})();
+function lA(){try{var s=sGet(SK);if(s){var p=JSON.parse(s);if(Array.isArray(p)&&p.length>0)return p}}catch(e){}var s2=seed();sA(s2);return s2}
+function sA(d){try{sSet(SK,JSON.stringify(d))}catch(e){}}
+function clrAll(){sClear([SK,LK,HK])}
+var assets=lA(),lastAddedId=null;
+syncLA();fHist=lFH();syncHA();
 
 // ============================================================
 //  TOAST
 // ============================================================
-function showToast(msg,type){type=type||'success';var c=document.getElementById('toastContainer'),t=document.createElement('div');t.className='toast';var icons={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle'},cols={success:'#22c55e',error:'#ef4444',info:'#38bdf8'};t.innerHTML='<i class="fas '+icons[type]+'" style="color:'+cols[type]+'"></i><span>'+msg+'</span>';c.appendChild(t);setTimeout(function(){t.classList.add('out');setTimeout(function(){t.remove()},300)},3000)}
+function toast(msg,tp){tp=tp||'success';var c=document.getElementById('toastContainer'),el=document.createElement('div');el.className='toast';var ic={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle'},cl={success:'#22c55e',error:'#ef4444',info:'#38bdf8'};el.innerHTML='<i class="fas '+ic[tp]+'" style="color:'+cl[tp]+'"></i><span>'+msg+'</span>';c.appendChild(el);setTimeout(function(){el.classList.add('out');setTimeout(function(){el.remove()},300)},3000)}
 
 // ============================================================
 //  SORT
 // ============================================================
-var sortState={field:'createdAt',dir:'desc'};
-function getSortVal(a,f){if(f==='createdAt')return a.createdAt||0;if(f==='cost')return a.cost!=null?a.cost:null;if(f==='purchaseDate'||f==='warrantyExpiry')return a[f]||'';return a[f]||''}
-function getFilteredAssets(){var search=(document.getElementById('searchInput').value||'').toLowerCase().trim(),typeF=document.getElementById('filterType').value,condF=document.getElementById('filterCondition').value,deptF=document.getElementById('filterDept').value,locF=document.getElementById('filterLocation').value,result=[];for(var i=0;i<assets.length;i++){var a=assets[i];if(typeF&&a.type!==typeF)continue;if(condF&&a.condition!==condF)continue;if(deptF&&a.department!==deptF)continue;if(locF&&a.location!==locF)continue;if(search){var hay=(a.code+' '+a.name+' '+a.type+' '+a.serial+' '+a.location+' '+a.department+' '+a.assignedTo+' '+(a.specs||'')+' '+(a.notes||'')+' '+hwStr(a)).toLowerCase();if(hay.indexOf(search)===-1)continue}result.push(a)}var field=sortState.field,dir=sortState.dir==='asc'?1:-1;result.sort(function(a,b){var va=getSortVal(a,field),vb=getSortVal(b,field);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;if(typeof va==='number'&&typeof vb==='number')return(va-vb)*dir;return String(va).toLowerCase().localeCompare(String(vb).toLowerCase())*dir});return result}
-function toggleSort(f){if(sortState.field===f){sortState.dir=sortState.dir==='asc'?'desc':'asc'}else{sortState.field=f;sortState.dir='asc'}renderAssets()}
+var sortS={f:'createdAt',d:'desc'};
+function gSV(a,f){if(f==='createdAt')return a.createdAt||0;if(f==='cost')return a.cost!=null?a.cost:null;if(f==='purchaseDate'||f==='warrantyExpiry')return a[f]||'';return a[f]||''}
+function gFA(){var sr=(document.getElementById('searchInput').value||'').toLowerCase().trim(),tf=document.getElementById('filterType').value,cf=document.getElementById('filterCondition').value,df=document.getElementById('filterDept').value,lf=document.getElementById('filterLocation').value,r=[];for(var i=0;i<assets.length;i++){var a=assets[i];if(tf&&a.type!==tf)continue;if(cf&&a.condition!==cf)continue;if(df&&a.department!==df)continue;if(lf&&a.location!==lf)continue;if(sr){var h=(a.code+' '+a.name+' '+a.type+' '+a.serial+' '+a.location+' '+a.department+' '+a.assignedTo+' '+(a.specs||'')+' '+(a.notes||'')+' '+hwS(a)).toLowerCase();if(h.indexOf(sr)===-1)continue}r.push(a)}var f=sortS.f,dr=sortS.d==='asc'?1:-1;r.sort(function(a,b){var va=gSV(a,f),vb=gSV(b,f);if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;if(typeof va==='number'&&typeof vb==='number')return(va-vb)*dr;return String(va).toLowerCase().localeCompare(String(vb).toLowerCase())*dr});return r}
+function tSort(f){if(sortS.f===f)sortS.d=sortS.d==='asc'?'desc':'asc';else{sortS.f=f;sortS.d='asc'}renderAssets()}
 
 // ============================================================
-//  VIEW SWITCHING
+//  VIEW
 // ============================================================
-function switchView(v){document.getElementById('dashboardView').classList.toggle('hidden',v!=='dashboard');document.getElementById('assetsView').classList.toggle('hidden',v!=='assets');document.getElementById('listsView').classList.toggle('hidden',v!=='lists');var links=document.querySelectorAll('.sidebar-link');for(var i=0;i<links.length;i++)links[i].classList.toggle('active',links[i].getAttribute('data-view')===v);if(v==='dashboard')renderDashboard();else if(v==='assets')renderAssets();else if(v==='lists')renderLists();if(window.innerWidth<=1024)document.getElementById('sidebar').classList.remove('open')}
-function renderCurrentView(){var active=document.querySelector('.sidebar-link.active');var view=active?active.getAttribute('data-view'):'dashboard';if(view==='dashboard')renderDashboard();else if(view==='assets')renderAssets();else if(view==='lists')renderLists()}
+function switchView(v){document.getElementById('dashboardView').classList.toggle('hidden',v!=='dashboard');document.getElementById('assetsView').classList.toggle('hidden',v!=='assets');document.getElementById('listsView').classList.toggle('hidden',v!=='lists');var ls=document.querySelectorAll('.sidebar-link');for(var i=0;i<ls.length;i++)ls[i].classList.toggle('active',ls[i].getAttribute('data-view')===v);if(v==='dashboard')rDash();else if(v==='assets')rAssets();else if(v==='lists')rLists();if(window.innerWidth<=1024)document.getElementById('sidebar').classList.remove('open')}
+function rCV(){var a=document.querySelector('.sidebar-link.active');var v=a?a.getAttribute('data-view'):'dashboard';if(v==='dashboard')rDash();else if(v==='assets')rAssets();else if(v==='lists')rLists()}
 
 // ============================================================
 //  DASHBOARD
 // ============================================================
-function renderDashboard(){var totalAssets=assets.length,totalValue=0,typesSet={},ageSum=0,ageCount=0,warrantyAlerts=0;for(var i=0;i<assets.length;i++){var a=assets[i];if(a.cost!=null)totalValue+=a.cost;if(a.type)typesSet[a.type]=true;var age=calcAge(a.purchaseDate);if(age){var months=0,ym=age.match(/(\d+)\s*year/),mm=age.match(/(\d+)\s*month/);if(ym)months+=parseInt(ym[1])*12;if(mm)months+=parseInt(mm[1]);ageSum+=months;ageCount++}var wi=warrantyInfo(a.warrantyExpiry);if(wi.cls==='warranty-expired'||wi.cls==='warranty-warn')warrantyAlerts++}var avgAge=ageCount>0?(ageSum/ageCount):0;var avgAgeStr;if(avgAge<1)avgAgeStr='< 1 month';else if(avgAge<12)avgAgeStr=Math.round(avgAge)+' months';else avgAgeStr=(avgAge/12).toFixed(1)+' years';var typeCount=0;for(var k in typesSet)if(typesSet.hasOwnProperty(k))typeCount++;document.getElementById('statsGrid').innerHTML=statCardHTML('fa-boxes-stacked','Total Assets',totalAssets,'gold')+statCardHTML('fa-dollar-sign','Total Value',fmtCost(totalValue),'blue')+statCardHTML('fa-layer-group','Asset Types',typeCount,'green')+statCardHTML('fa-clock','Avg Age',avgAgeStr,'purple')+statCardHTML('fa-shield-halved','Warranty Alerts',warrantyAlerts,'red',warrantyAlerts>0);var sorted=assets.slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0)});renderMiniTable('recentTableWrap',sorted.slice(0,5));renderDistribution('typeDistribution',assets,'type',BAR_COLORS);renderDistribution('locationDistribution',assets,'location',null);renderDistribution('conditionDistribution',assets,'condition',COND_COLORS)}
-function statCardHTML(icon,label,value,colorClass,warn){return '<div class="stat-card '+colorClass+'"><div class="flex items-center justify-between mb-2"><span class="text-xs text-muted font-medium uppercase tracking-wider">'+label+'</span><i class="fas '+icon+' text-lg" style="color:var(--muted);opacity:.5"></i></div><div class="font-heading text-2xl font-bold text-fg">'+value+'</div>'+(warn?'<div class="text-xs mt-1" style="color:#f97316"><i class="fas fa-exclamation-triangle mr-1"></i>Action needed</div>':'')+'</div>'}
-function renderDistribution(cid,data,field,colorMap){var counts={};for(var i=0;i<data.length;i++){var val=data[i][field]||'Unknown';counts[val]=(counts[val]||0)+1}var entries=[];for(var k in counts)if(counts.hasOwnProperty(k))entries.push({name:k,count:counts[k]});entries.sort(function(a,b){return b.count-a.count});var max=entries.length>0?entries[0].count:1;var dc=['#e8a630','#38bdf8','#22c55e','#a855f7','#f97316','#ec4899','#14b8a6','#eab308','#6b7280','#ef4444'];var html='';for(var i=0;i<entries.length;i++){var e=entries[i],pct=Math.max(5,(e.count/max)*100);var color=colorMap?(colorMap[e.name]||'#6b7280'):dc[i%dc.length];html+='<div class="flex items-center gap-3 mb-2.5"><span class="text-xs text-muted w-[110px] text-right truncate" title="'+esc(e.name)+'">'+esc(e.name)+'</span><div class="flex-1 h-5 rounded-md overflow-hidden" style="background:var(--surface)"><div class="h-full rounded-md transition-all duration-500" style="width:'+pct+'%;background:'+color+';opacity:.8"></div></div><span class="text-xs text-fg font-semibold w-[28px] text-right">'+e.count+'</span></div>'}if(entries.length===0)html='<div class="text-center text-muted text-sm py-6">No data</div>';document.getElementById(cid).innerHTML=html}
-function renderMiniTable(cid,data){if(data.length===0){document.getElementById(cid).innerHTML='<div class="empty-state" style="padding:40px 20px"><i class="fas fa-inbox block"></i><p class="text-sm">No assets yet</p></div>';return}var html='<table class="asset-table"><thead><tr><th class="no-sort">Code</th><th class="no-sort">Name</th><th class="no-sort">Type</th><th class="no-sort">Location</th><th class="no-sort">Assigned To</th><th class="no-sort">Condition</th><th class="no-sort">Cost</th></tr></thead><tbody>';for(var i=0;i<data.length;i++){var a=data[i],isNew=a.id===lastAddedId;html+='<tr class="fade-in-row'+(isNew?' highlight-new':'')+'" style="animation-delay:'+(i*30)+'ms"><td class="font-medium text-fg whitespace-nowrap">'+esc(a.code)+(isNew?' <span class="new-badge">New</span>':'')+'</td><td class="text-fg">'+esc(a.name||'\u2014')+'</td><td>'+typeBadge(a.type)+'</td><td class="text-xs">'+esc(a.location||'\u2014')+'</td><td class="text-xs">'+esc(a.assignedTo||'\u2014')+'</td><td>'+condBadge(a.condition)+'</td><td class="text-xs font-medium whitespace-nowrap">'+fmtCost(a.cost)+'</td></tr>'}html+='</tbody></table>';document.getElementById(cid).innerHTML=html}
+function rDash(){var ta=assets.length,tv=0,ts={},as2=0,ac=0,wa=0;for(var i=0;i<assets.length;i++){var a=assets[i];if(a.cost!=null)tv+=a.cost;if(a.type)ts[a.type]=true;var age=cAge(a.purchaseDate);if(age){var mo=0,ym=age.match(/(\d+)\s*\w+/);if(ym)mo=parseInt(ym[1]);as2+=mo;ac++}var wi=wInfo(a.warrantyExpiry);if(wi.c==='warranty-expired'||wi.c==='warranty-warn')wa++}var aa=ac>0?(as2/ac):0;var aas;if(aa<1)aas=t('lessThanMonth');else if(aa<12)aas=Math.round(aa)+' '+t('months');else aas=(aa/12).toFixed(1)+' '+t('years');var tc=0;for(var k in ts)if(ts.hasOwnProperty(k))tc++;var sg=document.getElementById('statsGrid');sg.innerHTML=sCH('fa-boxes-stacked',t('totalAssets'),ta,'gold')+sCH('fa-dollar-sign',t('totalValue'),fc(tv),'blue')+sCH('fa-layer-group',t('assetTypes'),tc,'green')+sCH('fa-clock',t('avgAge'),aas,'purple')+sCH('fa-shield-halved',t('warrantyAlerts'),wa,'red',wa>0);var sorted=assets.slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0)});rMT('recentTableWrap',sorted.slice(0,5));rDist('typeDistribution',assets,'type',BAR_COLORS);rDist('locationDistribution',assets,'location',null);rDist('conditionDistribution',assets,'condition',COND_COLORS)}
+function sCH(ic,lb,val,cc,wn){return '<div class="stat-card '+cc+'"><div class="flex items-center justify-between mb-2"><span class="text-xs text-muted font-medium uppercase tracking-wider">'+lb+'</span><i class="fas '+ic+' text-lg" style="color:var(--muted);opacity:.5"></i></div><div class="font-heading text-2xl font-bold text-fg">'+val+'</div>'+(wn?'<div class="text-xs mt-1" style="color:#f97316"><i class="fas fa-exclamation-triangle mr-1"></i>'+t('actionNeeded')+'</div>':'')+'</div>'}
+function rDist(cid,data,field,cm){var cts={};for(var i=0;i<data.length;i++){var v=data[i][field]||'Unknown';cts[v]=(cts[v]||0)+1}var en=[];for(var k in cts)if(cts.hasOwnProperty(k))en.push({n:k,c:cts[k]});en.sort(function(a,b){return b.c-a.c});var mx=en.length>0?en[0].c:1;var dc=['#27AE60','#38bdf8','#22c55e','#a855f7','#f97316','#ec4899','#14b8a6','#eab308','#6b7280','#ef4444'];var h='';for(var i=0;i<en.length;i++){var e=en[i],pct=Math.max(5,(e.c/mx)*100);var co=cm?(cm[e.n]||'#6b7280'):dc[i%dc.length];h+='<div class="flex items-center gap-3 mb-2.5"><span class="text-xs text-muted w-[110px] text-right truncate" title="'+esc(e.n)+'">'+esc(e.n)+'</span><div class="flex-1 h-5 rounded-md overflow-hidden" style="background:var(--surface)"><div class="h-full rounded-md transition-all duration-500" style="width:'+pct+'%;background:'+co+';opacity:.8"></div></div><span class="text-xs text-fg font-semibold w-[28px] text-right">'+e.c+'</span></div>'}if(!en.length)h='<div class="text-center text-muted text-sm py-6">No data</div>';document.getElementById(cid).innerHTML=h}
+function rMT(cid,data){if(!data.length){document.getElementById(cid).innerHTML='<div class="empty-state" style="padding:40px 20px"><i class="fas fa-inbox block"></i><p class="text-sm">'+t('noAssets')+'</p></div>';return}var h='<table class="asset-table"><thead><tr><th class="no-sort">'+t('code')+'</th><th class="no-sort">'+t('name')+'</th><th class="no-sort">'+t('type')+'</th><th class="no-sort">'+t('loc')+'</th><th class="no-sort">'+t('assigned')+'</th><th class="no-sort">'+t('cond')+'</th><th class="no-sort">'+t('cost')+'</th></tr></thead><tbody>';for(var i=0;i<data.length;i++){var a=data[i],isNew=a.id===lastAddedId;h+='<tr class="fade-in-row'+(isNew?' highlight-new':'')+'"><td class="font-medium text-fg whitespace-nowrap">'+esc(a.code)+(isNew?' <span class="new-badge">'+t('new')+'</span>':'')+'</td><td class="text-fg">'+esc(a.name||'\u2014')+'</td><td>'+tBg(a.type)+'</td><td class="text-xs">'+esc(a.location||'\u2014')+'</td><td class="text-xs">'+esc(a.assignedTo||'\u2014')+'</td><td>'+cBg(a.condition)+'</td><td class="text-xs font-medium whitespace-nowrap">'+fc(a.cost)+'</td></tr>'}h+='</tbody></table>';document.getElementById(cid).innerHTML=h}
 
 // ============================================================
 //  ASSETS TABLE
 // ============================================================
-function renderAssets(){var filtered=getFilteredAssets();document.getElementById('assetCountLabel').textContent=filtered.length+' asset'+(filtered.length!==1?'s':'');if(filtered.length===0){document.getElementById('assetTableWrap').innerHTML='<div class="empty-state"><i class="fas fa-search block"></i><p class="text-sm">No assets match your filters</p></div>';return}var cols=[{key:'code',label:'Code'},{key:'name',label:'Name'},{key:'type',label:'Type'},{key:'serial',label:'Serial'},{key:'location',label:'Location'},{key:'department',label:'Department'},{key:'assignedTo',label:'Assigned To'},{key:'condition',label:'Condition'},{key:'cost',label:'Cost'},{key:'purchaseDate',label:'Purchased'},{key:'warrantyExpiry',label:'Warranty'}];var html='<table class="asset-table"><thead><tr>';for(var c=0;c<cols.length;c++){var col=cols[c],isSorted=sortState.field===col.key;var arrow=isSorted?(sortState.dir==='asc'?' <i class="fas fa-sort-up text-accent"></i>':' <i class="fas fa-sort-down text-accent"></i>'):' <i class="fas fa-sort" style="color:var(--border)"></i>';html+='<th onclick="toggleSort(\''+col.key+'\')">'+col.label+arrow+'</th>'}html+='<th style="text-align:center;cursor:default" class="no-sort">Actions</th></tr></thead><tbody>';for(var i=0;i<filtered.length;i++){var a=filtered[i],isNew=a.id===lastAddedId;html+='<tr class="fade-in-row'+(isNew?' highlight-new':'')+'" style="animation-delay:'+(i*20)+'ms"><td class="font-medium text-fg whitespace-nowrap">'+esc(a.code)+(isNew?' <span class="new-badge">New</span>':'')+'</td><td class="text-fg">'+esc(a.name||'\u2014')+'</td><td>'+typeBadge(a.type)+'</td><td class="text-muted text-xs font-mono">'+esc(a.serial||'\u2014')+'</td><td class="text-xs">'+esc(a.location||'\u2014')+'</td><td class="text-xs">'+esc(a.department||'\u2014')+'</td><td class="text-xs">'+esc(a.assignedTo||'\u2014')+'</td><td>'+condBadge(a.condition)+'</td><td class="text-xs font-medium whitespace-nowrap">'+fmtCost(a.cost)+'</td><td class="text-xs text-muted whitespace-nowrap">'+esc(a.purchaseDate||'\u2014')+'</td>';var wi=warrantyInfo(a.warrantyExpiry);html+='<td class="text-xs whitespace-nowrap '+wi.cls+'"><i class="fas '+wi.icon+' mr-1"></i>'+wi.label+'</td><td><div class="row-actions" style="justify-content:center"><button class="row-action-btn view" onclick="openDetail(\''+a.id+'\')" title="View"><i class="fas fa-eye"></i></button><button class="row-action-btn" onclick="openEditModal(\''+a.id+'\')" title="Edit"><i class="fas fa-pen"></i></button><button class="row-action-btn delete" onclick="confirmDeleteAsset(\''+a.id+'\')" title="Delete"><i class="fas fa-trash"></i></button></div></td></tr>'}html+='</tbody></table>';document.getElementById('assetTableWrap').innerHTML=html;if(lastAddedId)setTimeout(function(){lastAddedId=null},3000)}
+function rAssets(){var fl=gFA();document.getElementById('assetCountLabel').textContent=fl.length+' '+t('assets');if(!fl.length){document.getElementById('assetTableWrap').innerHTML='<div class="empty-state"><i class="fas fa-search block"></i><p class="text-sm">'+t('noMatch')+'</p></div>';return}var cols=[{k:'code',l:t('code')},{k:'name',l:t('name')},{k:'type',l:t('type')},{k:'serial',l:t('serial')},{k:'location',l:t('loc')},{k:'department',l:t('dept')},{k:'assignedTo',l:t('assigned')},{k:'condition',l:t('cond')},{k:'cost',l:t('cost')},{k:'purchaseDate',l:t('purchased')},{k:'warrantyExpiry',l:t('warranty')}];var h='<table class="asset-table"><thead><tr>';for(var c=0;c<cols.length;c++){var col=cols[c],isS=sortS.f===col.k;var ar=isS?(sortS.d==='asc'?' <i class="fas fa-sort-up text-accent"></i>':' <i class="fas fa-sort-down text-accent"></i>'):' <i class="fas fa-sort" style="color:var(--border)"></i>';h+='<th onclick="tSort(\''+col.k+'\')">'+col.l+ar+'</th>'}h+='<th style="text-align:center" class="no-sort">'+t('actions')+'</th></tr></thead><tbody>';for(var i=0;i<fl.length;i++){var a=fl[i],isNew=a.id===lastAddedId;h+='<tr class="fade-in-row'+(isNew?' highlight-new':'')+'"><td class="font-medium text-fg whitespace-nowrap">'+esc(a.code)+(isNew?' <span class="new-badge">'+t('new')+'</span>':'')+'</td><td class="text-fg">'+esc(a.name||'\u2014')+'</td><td>'+tBg(a.type)+'</td><td class="text-muted text-xs font-mono">'+esc(a.serial||'\u2014')+'</td><td class="text-xs">'+esc(a.location||'\u2014')+'</td><td class="text-xs">'+esc(a.department||'\u2014')+'</td><td class="text-xs">'+esc(a.assignedTo||'\u2014')+'</td><td>'+cBg(a.condition)+'</td><td class="text-xs font-medium whitespace-nowrap">'+fc(a.cost)+'</td><td class="text-xs text-muted whitespace-nowrap">'+esc(a.purchaseDate||'\u2014')+'</td>';var wi=wInfo(a.warrantyExpiry);h+='<td class="text-xs whitespace-nowrap '+wi.c+'"><i class="fas '+wi.i+' mr-1"></i>'+wi.l+'</td><td><div class="row-actions" style="justify-content:center"><button class="row-action-btn view" onclick="openDetail(\''+a.id+'\')" title="View"><i class="fas fa-eye"></i></button><button class="row-action-btn" onclick="openEditModal(\''+a.id+'\')" title="Edit"><i class="fas fa-pen"></i></button><button class="row-action-btn delete" onclick="confirmDelAsset(\''+a.id+'\')" title="Delete"><i class="fas fa-trash"></i></button></div></td></tr>'}h+='</tbody></table>';document.getElementById('assetTableWrap').innerHTML=h;if(lastAddedId)setTimeout(function(){lastAddedId=null},3000)}
 
 // ============================================================
-//  LISTS
+//  LISTS — with inline edit
 // ============================================================
-function renderLists(){var lists=loadLists();document.getElementById('deptCount').textContent=lists.departments.length;document.getElementById('locCount').textContent=lists.locations.length;document.getElementById('empCount').textContent=lists.employees.length;renderListItems('deptList',lists.departments,'departments');renderListItems('locList',lists.locations,'locations');renderListItems('empList',lists.employees,'employees')}
-function renderListItems(cid,items,lk){var el=document.getElementById(cid);if(items.length===0){el.innerHTML='<div class="list-empty">No items yet. Add one above.</div>';return}var html='';for(var i=0;i<items.length;i++)html+='<div class="list-item list-item-new"><span class="list-item-text"><i class="fas '+LIST_ICONS[lk]+'"></i>'+esc(items[i])+'</span><button class="list-delete-btn" onclick="deleteListItem(\''+lk+'\','+i+')" title="Remove"><i class="fas fa-times"></i></button></div>';el.innerHTML=html}
-function addListItem(lk){var iid=lk==='departments'?'newDeptInput':lk==='locations'?'newLocInput':'newEmpInput';var input=document.getElementById(iid),val=input.value.trim();if(!val)return;var lists=loadLists();for(var i=0;i<lists[lk].length;i++){if(lists[lk][i].toLowerCase()===val.toLowerCase()){showToast('This item already exists','error');return}}lists[lk].push(val);lists[lk].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});saveLists(lists);input.value='';buildManagedDatalists();populateFilterDropdowns();renderLists();showToast('Added "'+val+'" successfully')}
-function deleteListItem(lk,idx){var lists=loadLists(),name=lists[lk][idx];lists[lk].splice(idx,1);saveLists(lists);buildManagedDatalists();populateFilterDropdowns();renderLists();showToast('Removed "'+name+'"','info')}
-function populateFilterDropdowns(){var lists=loadLists();var ds=document.getElementById('filterDept'),ls=document.getElementById('filterLocation');var cd=ds.value,cl=ls.value;ds.innerHTML='<option value="">All Departments</option>';for(var i=0;i<lists.departments.length;i++)ds.innerHTML+='<option value="'+esc(lists.departments[i])+'">'+esc(lists.departments[i])+'</option>';ds.value=cd;ls.innerHTML='<option value="">All Locations</option>';for(var i=0;i<lists.locations.length;i++)ls.innerHTML+='<option value="'+esc(lists.locations[i])+'">'+esc(lists.locations[i])+'</option>';ls.value=cl}
+var editingListKey=null,editingListIdx=-1;
+function rLists(){var ls=lL();document.getElementById('deptCount').textContent=ls.departments.length;document.getElementById('locCount').textContent=ls.locations.length;document.getElementById('empCount').textContent=ls.employees.length;rLI('deptList',ls.departments,'departments');rLI('locList',ls.locations,'locations');rLI('empList',ls.employees,'employees')}
+function rLI(cid,items,lk){var el=document.getElementById(cid);if(!items.length){el.innerHTML='<div class="list-empty">'+t('noItems')+'</div>';return}var h='';for(var i=0;i<items.length;i++){var isEditing=(editingListKey===lk&&editingListIdx===i);h+='<div class="list-item list-item-new">';h+='<div class="list-item-text"><i class="fas '+LIST_ICONS[lk]+'"></i>';if(isEditing){h+='<input class="list-edit-input" id="listEditInput" value="'+esc(items[i])+'" onkeydown="listEditKey(event,\''+lk+'\','+i+')" onblur="saveListEdit(\''+lk+'\','+i+')">'}else{h+='<span onclick="startListEdit(\''+lk+'\','+i+')" title="'+t('editName')+'">'+esc(items[i])+'</span>'}h+='</div><div class="list-item-actions">';if(!isEditing){h+='<button class="list-edit-btn" onclick="startListEdit(\''+lk+'\','+i+')" title="'+t('editName')+'"><i class="fas fa-pen"></i></button>'}h+='<button class="list-delete-btn" onclick="delListItem(\''+lk+'\','+i+')" title="Delete"><i class="fas fa-times"></i></button>';h+='</div></div>'}el.innerHTML=h;if(isEditing){var inp=document.getElementById('listEditInput');if(inp){inp.focus();inp.select()}}}
+function startListEdit(lk,idx){editingListKey=lk;editingListIdx=idx;rLists()}
+function saveListEdit(lk,idx){var inp=document.getElementById('listEditInput');if(!inp){editingListKey=null;editingListIdx=-1;rLists();return}var val=inp.value.trim();if(!val){editingListKey=null;editingListIdx=-1;rLists();return}var ls=lL();if(val.toLowerCase()!==ls[lk][idx].toLowerCase()){for(var i=0;i<ls[lk].length;i++){if(i!==idx&&ls[lk][i].toLowerCase()===val.toLowerCase()){toast(t('exists'),'error');editingListKey=null;editingListIdx=-1;rLists();return}}}ls[lk][idx]=val;ls[lk].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});sL(ls);editingListKey=null;editingListIdx=-1;bMDL();pFD();rLists();toast(t('name')+' '+t('save').toLowerCase()+'d','info')}
+function listEditKey(e,lk,idx){if(e.key==='Enter'){e.preventDefault();saveListEdit(lk,idx)}else if(e.key==='Escape'){editingListKey=null;editingListIdx=-1;rLists()}}
+function addListItem(lk){var iid=lk==='departments'?'newDeptInput':lk==='locations'?'newLocInput':'newEmpInput';var inp=document.getElementById(iid),val=inp.value.trim();if(!val)return;var ls=lL();for(var i=0;i<ls[lk].length;i++){if(ls[lk][i].toLowerCase()===val.toLowerCase()){toast(t('exists'),'error');return}}ls[lk].push(val);ls[lk].sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});sL(ls);inp.value='';bMDL();pFD();rLists();toast(t('added')+' "'+val+'"')}
+function delListItem(lk,idx){var ls=lL(),nm=ls[lk][idx];ls[lk].splice(idx,1);sL(ls);bMDL();pFD();rLists();toast(t('removed')+' "'+nm+'"','info')}
+function pFD(){var ls=lL();var ds=document.getElementById('filterDept'),ls2=document.getElementById('filterLocation');var cd=ds.value,cl=ls2.value;ds.innerHTML='<option value="">'+t('allDepts')+'</option>';for(var i=0;i<ls.departments.length;i++)ds.innerHTML+='<option value="'+esc(ls.departments[i])+'">'+esc(ls.departments[i])+'</option>';ds.value=cd;ls2.innerHTML='<option value="">'+t('allLocs')+'</option>';for(var i=0;i<ls.locations.length;i++)ls2.innerHTML+='<option value="'+esc(ls.locations[i])+'">'+esc(ls.locations[i])+'</option>';ls2.value=cl}
 
 // ============================================================
-//  ADD / EDIT MODAL
+//  EMPLOYEE IMPORT/EXPORT
 // ============================================================
-function clearFormErrors(){var errs=document.querySelectorAll('.form-error');for(var i=0;i<errs.length;i++)errs[i].classList.remove('show')}
-function clearForm(){var inputs=document.querySelectorAll('#assetForm input, #assetForm select, #assetForm textarea');for(var i=0;i<inputs.length;i++){if(inputs[i].type==='hidden')continue;inputs[i].value=''}document.getElementById('ageText').textContent='Set purchase date to calculate';document.getElementById('ageText').style.color='var(--muted)';clearFormErrors()}
-function openModal(){document.getElementById('assetModal').classList.add('open');document.body.style.overflow='hidden'}
-function closeModal(){document.getElementById('assetModal').classList.remove('open');document.body.style.overflow='';clearFormErrors()}
-function openAddModal(){clearForm();document.getElementById('editId').value='';document.getElementById('modalTitle').textContent='Add New Asset';document.getElementById('submitBtn').innerHTML='<i class="fas fa-check text-xs"></i> Save Asset';openModal();if(window.innerWidth<=1024)document.getElementById('sidebar').classList.remove('open')}
-function openEditModal(id){var asset=null;for(var i=0;i<assets.length;i++)if(assets[i].id===id){asset=assets[i];break}if(!asset)return;clearFormErrors();document.getElementById('editId').value=asset.id;document.getElementById('modalTitle').textContent='Edit Asset';document.getElementById('submitBtn').innerHTML='<i class="fas fa-check text-xs"></i> Update Asset';document.getElementById('fCode').value=asset.code||'';document.getElementById('fName').value=asset.name||'';document.getElementById('fType').value=asset.type||'';document.getElementById('fSerial').value=asset.serial||'';document.getElementById('fLocation').value=asset.location||'';document.getElementById('fDepartment').value=asset.department||'';document.getElementById('fAssigned').value=asset.assignedTo||'';document.getElementById('fCondition').value=asset.condition||'';document.getElementById('fCost').value=asset.cost!=null?asset.cost:'';document.getElementById('fPurchaseDate').value=asset.purchaseDate||'';document.getElementById('fWarranty').value=asset.warrantyExpiry||'';document.getElementById('fSpecs').value=asset.specs||'';document.getElementById('fNotes').value=asset.notes||'';var hf={fManufacturer:'manufacturer',fModel:'model',fProcessor:'processor',fRAM:'ram',fGPU:'gpu',fSSD:'ssd',fHDD:'hdd',fMAC:'macAddress'};for(var fid in hf){if(!hf.hasOwnProperty(fid))continue;document.getElementById(fid).value=(asset.hardware&&asset.hardware[hf[fid]])?asset.hardware[hf[fid]]:''}updateAgePreview();openModal()}
-function updateAgePreview(){var ds=document.getElementById('fPurchaseDate').value,el=document.getElementById('ageText');if(!ds){el.textContent='Set purchase date to calculate';el.style.color='var(--muted)';return}var age=calcAge(ds);el.textContent=age||'Less than 1 month';if(!age||age.indexOf('Less than')===0)el.style.color='#22c55e';else{var years=parseInt(age);if(years>=5)el.style.color='#ef4444';else if(years>=3)el.style.color='#f97316';else el.style.color='#22c55e'}}
-function handleFormSubmit(e){e.preventDefault();clearFormErrors();var code=document.getElementById('fCode').value.trim();if(!code){document.getElementById('fCodeErr').classList.add('show');return}var serial=document.getElementById('fSerial').value.trim(),editId=document.getElementById('editId').value;if(serial){for(var i=0;i<assets.length;i++){if(assets[i].serial&&assets[i].serial.toLowerCase()===serial.toLowerCase()&&assets[i].id!==editId){document.getElementById('fSerialErr').classList.add('show');return}}}var mac=normalizeMAC(document.getElementById('fMAC').value);if(mac){for(var i=0;i<assets.length;i++){if(assets[i].hardware&&assets[i].hardware.macAddress&&normalizeMAC(assets[i].hardware.macAddress)===mac&&assets[i].id!==editId){document.getElementById('fMACErr').classList.add('show');return}}}var existingCreatedAt=Date.now();if(editId){for(var i=0;i<assets.length;i++)if(assets[i].id===editId){existingCreatedAt=assets[i].createdAt||Date.now();break}}var asset={id:editId||genId(),code:code,name:document.getElementById('fName').value.trim(),type:document.getElementById('fType').value.trim(),serial:serial,location:document.getElementById('fLocation').value.trim(),department:document.getElementById('fDepartment').value.trim(),assignedTo:document.getElementById('fAssigned').value.trim(),condition:document.getElementById('fCondition').value,cost:document.getElementById('fCost').value!==''?parseFloat(document.getElementById('fCost').value):null,purchaseDate:document.getElementById('fPurchaseDate').value,warrantyExpiry:document.getElementById('fWarranty').value,specs:document.getElementById('fSpecs').value.trim(),notes:document.getElementById('fNotes').value.trim(),hardware:null,createdAt:existingCreatedAt};var hwFids=['fManufacturer','fModel','fProcessor','fRAM','fGPU','fSSD','fHDD'],hwPs=['manufacturer','model','processor','ram','gpu','ssd','hdd'],hasHw=false,hw={};for(var i=0;i<hwFids.length;i++){var val=document.getElementById(hwFids[i]).value.trim();if(val){hw[hwPs[i]]=val;hasHw=true}}var macVal=document.getElementById('fMAC').value.trim();if(macVal){hw.macAddress=macVal;hasHw=true}if(hasHw)asset.hardware=hw;if(editId){var idx=-1;for(var i=0;i<assets.length;i++)if(assets[i].id===editId){idx=i;break}if(idx!==-1)assets[idx]=asset}else{assets.unshift(asset);lastAddedId=asset.id}saveAssets(assets);addToListIfNew('locations',asset.location);addToListIfNew('departments',asset.department);addToListIfNew('employees',asset.assignedTo);for(var dlId in DL_MAP)if(DL_MAP.hasOwnProperty(dlId))addToHistory(dlId,document.getElementById(DL_MAP[dlId].field).value);buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();closeModal();renderCurrentView();showToast(editId?'Asset updated successfully':'Asset added successfully')}
+var empImportRows=[];
+function exportEmployeeList(){var ls=lL();if(!ls.employees.length){toast(t('noEmpExport'),'error');return}var rows=[['Employee Name']];for(var i=0;i<ls.employees.length;i++)rows.push([ls.employees[i]]);var ws=XLSX.utils.aoa_to_sheet(rows);var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Employees');XLSX.writeFile(wb,'buna_employees_'+new Date().toISOString().slice(0,10)+'.xlsx');toast(ls.employees.length+' '+t('empExported'),'info')}
+function openEmpImportModal(){document.getElementById('empImportModal').classList.add('open');document.body.style.overflow='hidden';resetEmpImport()}
+function closeEmpImportModal(){document.getElementById('empImportModal').classList.remove('open');document.body.style.overflow=''}
+function resetEmpImport(){empImportRows=[];document.getElementById('empImportStep1').style.display='block';document.getElementById('empImportStep2').style.display='none';document.getElementById('empImportFileInput').value=''}
+(function(){var dz=document.getElementById('empImportDropZone');if(!dz)return;dz.addEventListener('dragover',function(e){e.preventDefault();e.stopPropagation();dz.classList.add('dragover')});dz.addEventListener('dragleave',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('dragover')});dz.addEventListener('drop',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('dragover');if(e.dataTransfer.files.length)handleEmpImportFile(e.dataTransfer.files)})})();
+function handleEmpImportFile(files){if(!files||!files.length)return;var f=files[0],ext=f.name.split('.').pop().toLowerCase();if(ext==='csv'){var r=new FileReader();r.onload=function(e){var rows=pCSV(e.target.result);if(rows.length<2){toast(t('fileEmpty'),'error');return}empImportRows=rows;processEmpImport(f.name)};r.readAsText(f)}else if(ext==='xlsx'||ext==='xls'){var r=new FileReader();r.onload=function(e){try{var d=new Uint8Array(e.target.result),wb=XLSX.read(d,{type:'array'}),s=wb.Sheets[wb.SheetNames[0]];empImportRows=XLSX.utils.sheet_to_json(s,{header:1,defval:''}).filter(function(r){return r.some(function(c){return String(c).trim()})});if(empImportRows.length<2){toast(t('fileEmpty'),'error');return}processEmpImport(f.name)}catch(err){toast(t('readFailed')+': '+err.message,'error')}};r.readAsArrayBuffer(f)}else{toast(t('unsupported'),'error')}}
+function processEmpImport(fn){var ls=lL(),nc=0,sc=0;var h='<table class="import-preview-table"><thead><tr><th>#</th><th>'+t('status')+'</th><th>'+t('name')+'</th></tr></thead><tbody>';for(var i=1;i<empImportRows.length;i++){var name=String(empImportRows[i][0]||'').trim();if(!name)continue;var dup=false;for(var j=0;j<ls.employees.length;j++){if(ls.employees[j].toLowerCase()===name.toLowerCase()){dup=true;break}}if(dup){h+='<tr class="row-skip"><td>'+(i)+'</td><td><span class="import-badge import-badge-skip">'+t('skip')+'</span></td><td>'+esc(name)+'</td></tr>';sc++}else{h+='<tr class="row-new"><td>'+(i)+'</td><td><span class="import-badge import-badge-new">'+t('new')+'</span></td><td>'+esc(name)+'</td></tr>';nc++}}h+='</tbody></table>';document.getElementById('empImportStep1').style.display='none';document.getElementById('empImportStep2').style.display='block';document.getElementById('empImportFileInfo').innerHTML='<i class="fas fa-file-alt mr-1"></i> <strong>'+esc(fn)+'</strong>';document.getElementById('empImportPreviewWrap').innerHTML=h;document.getElementById('empImportSummary').innerHTML='<span class="import-badge import-badge-new"><i class="fas fa-plus mr-1"></i>'+nc+' '+t('newCount')+'</span>'+(sc?'<span class="import-badge import-badge-skip"><i class="fas fa-forward mr-1"></i>'+sc+' '+t('skipCount')+'</span>':'');document.getElementById('empImportCountBtn').textContent=nc;document.getElementById('empImportConfirmBtn').disabled=!nc;document.getElementById('empImportConfirmBtn').style.opacity=nc?1:.4}
+function executeEmpImport(){var ls=lL(),added=0;for(var i=1;i<empImportRows.length;i++){var name=String(empImportRows[i][0]||'').trim();if(!name)continue;var dup=false;for(var j=0;j<ls.employees.length;j++){if(ls.employees[j].toLowerCase()===name.toLowerCase()){dup=true;break}}if(!dup){ls.employees.push(name);added++}}ls.employees.sort(function(a,b){return a.toLowerCase().localeCompare(b.toLowerCase())});sL(ls);bMDL();pFD();closeEmpImportModal();rLists();toast(added+' '+t('empImported'),'info')}
 
 // ============================================================
-//  DETAIL MODAL
+//  ADD/EDIT MODAL
 // ============================================================
-function openDetail(id){var asset=null;for(var i=0;i<assets.length;i++)if(assets[i].id===id){asset=assets[i];break}if(!asset)return;document.getElementById('detailTitle').textContent=asset.code+(asset.name?' \u2014 '+asset.name:'');var html='<div class="flex items-center gap-3 mb-5">'+typeBadge(asset.type)+condBadge(asset.condition)+'</div>';html+='<div class="section-title">Assignment & Location</div><div class="spec-grid mb-5">';html+=specItem('Location',asset.location);html+=specItem('Department',asset.department);html+=specItem('Assigned To',asset.assignedTo);html+=specItem('Serial Number',asset.serial);html+='</div><div class="section-title">Financial & Status</div><div class="spec-grid mb-5">';html+=specItem('Purchase Cost',fmtCost(asset.cost));html+=specItem('Purchase Date',asset.purchaseDate||'\u2014');html+=specItem('Asset Age',calcAge(asset.purchaseDate)||'\u2014');var wi=warrantyInfo(asset.warrantyExpiry);html+='<div class="spec-item"><div class="spec-item-label">Warranty</div><div class="spec-item-value '+wi.cls+'"><i class="fas '+wi.icon+' mr-1"></i>'+wi.label+(asset.warrantyExpiry?' <span class="text-muted text-xs">('+asset.warrantyExpiry+')</span>':'')+'</div></div></div>';if(asset.hardware){html+='<div class="section-title">Hardware Specifications</div><div class="spec-grid mb-5">';var h=asset.hardware;if(h.manufacturer)html+=specItem('Manufacturer',h.manufacturer);if(h.model)html+=specItem('Model',h.model);if(h.processor)html+=specItem('Processor',h.processor);if(h.ram)html+=specItem('RAM',h.ram);if(h.gpu)html+=specItem('Graphics',h.gpu);if(h.ssd)html+=specItem('SSD',h.ssd);if(h.hdd)html+=specItem('HDD',h.hdd);if(h.macAddress)html+=specItem('MAC Address',h.macAddress);html+='</div>'}if(asset.specs)html+='<div class="section-title">Specifications</div><div class="spec-item mb-5"><div class="spec-item-value">'+esc(asset.specs)+'</div></div>';if(asset.notes)html+='<div class="section-title">Notes</div><div class="spec-item mb-5"><div class="spec-item-value">'+esc(asset.notes)+'</div></div>';html+='<div class="flex justify-end gap-3 pt-2 border-t border-border mt-2"><button class="btn-danger-outline" onclick="closeDetail();confirmDeleteAsset(\''+asset.id+'\')"><i class="fas fa-trash text-xs"></i> Delete</button><button class="btn-primary" onclick="closeDetail();openEditModal(\''+asset.id+'\')"><i class="fas fa-pen text-xs"></i> Edit</button></div>';document.getElementById('detailBody').innerHTML=html;document.getElementById('detailModal').classList.add('open');document.body.style.overflow='hidden'}
+function cFE(){var es=document.querySelectorAll('.form-error');for(var i=0;i<es.length;i++)es[i].classList.remove('show')}
+function cF(){var ins=document.querySelectorAll('#assetForm input,#assetForm select,#assetForm textarea');for(var i=0;i<ins.length;i++){if(ins[i].type==='hidden')continue;ins[i].value=''}document.getElementById('ageText').textContent=t('setDateCalc');document.getElementById('ageText').style.color='var(--muted)';cFE()}
+function oM(){document.getElementById('assetModal').classList.add('open');document.body.style.overflow='hidden'}
+function cM(){document.getElementById('assetModal').classList.remove('open');document.body.style.overflow='';cFE()}
+function openAddModal(){cF();document.getElementById('editId').value='';document.querySelector('#modalTitle [data-t]').setAttribute('data-t','addNewAsset');document.getElementById('modalTitle').textContent=t('addNewAsset');document.getElementById('submitBtn').innerHTML='<i class="fas fa-check text-xs"></i> '+t('saveAsset');oM();if(window.innerWidth<=1024)document.getElementById('sidebar').classList.remove('open')}
+function openEditModal(id){var a=null;for(var i=0;i<assets.length;i++)if(assets[i].id===id){a=assets[i];break}if(!a)return;cFE();document.getElementById('editId').value=a.id;document.getElementById('modalTitle').textContent=t('editAsset');document.getElementById('submitBtn').innerHTML='<i class="fas fa-check text-xs"></i> '+t('updateAsset');document.getElementById('fCode').value=a.code||'';document.getElementById('fName').value=a.name||'';document.getElementById('fType').value=a.type||'';document.getElementById('fSerial').value=a.serial||'';document.getElementById('fLocation').value=a.location||'';document.getElementById('fDepartment').value=a.department||'';document.getElementById('fAssigned').value=a.assignedTo||'';document.getElementById('fCondition').value=a.condition||'';document.getElementById('fCost').value=a.cost!=null?a.cost:'';document.getElementById('fPurchaseDate').value=a.purchaseDate||'';document.getElementById('fWarranty').value=a.warrantyExpiry||'';document.getElementById('fSpecs').value=a.specs||'';document.getElementById('fNotes').value=a.notes||'';var hf={fManufacturer:'manufacturer',fModel:'model',fProcessor:'processor',fRAM:'ram',fGPU:'gpu',fSSD:'ssd',fHDD:'hdd',fMAC:'macAddress'};for(var fid in hf){if(!hf.hasOwnProperty(fid))continue;document.getElementById(fid).value=(a.hardware&&a.hardware[hf[fid]])?a.hardware[hf[fid]]:''}uAP();oM()}
+function uAP(){var ds=document.getElementById('fPurchaseDate').value,el=document.getElementById('ageText');if(!ds){el.textContent=t('setDateCalc');el.style.color='var(--muted)';return}var age=cAge(ds);el.textContent=age||t('lessThanMonth');if(!age||age.indexOf(t('lessThanMonth'))===0)el.style.color='#22c55e';else{var yr=parseInt(age);if(yr>=5)el.style.color='#ef4444';else if(yr>=3)el.style.color='#f97316';else el.style.color='#22c55e'}}
+function handleFormSubmit(e){e.preventDefault();cFE();var code=document.getElementById('fCode').value.trim();if(!code){document.getElementById('fCodeErr').classList.add('show');return}var serial=document.getElementById('fSerial').value.trim(),eid=document.getElementById('editId').value;if(serial){for(var i=0;i<assets.length;i++){if(assets[i].serial&&assets[i].serial.toLowerCase()===serial.toLowerCase()&&assets[i].id!==eid){document.getElementById('fSerialErr').classList.add('show');return}}}var mac=nmac(document.getElementById('fMAC').value);if(mac){for(var i=0;i<assets.length;i++){if(assets[i].hardware&&assets[i].hardware.macAddress&&nmac(assets[i].hardware.macAddress)===mac&&assets[i].id!==eid){document.getElementById('fMACErr').classList.add('show');return}}}var ect=Date.now();if(eid){for(var i=0;i<assets.length;i++)if(assets[i].id===eid){ect=assets[i].createdAt||Date.now();break}}var asset={id:eid||gid(),code:code,name:document.getElementById('fName').value.trim(),type:document.getElementById('fType').value.trim(),serial:serial,location:document.getElementById('fLocation').value.trim(),department:document.getElementById('fDepartment').value.trim(),assignedTo:document.getElementById('fAssigned').value.trim(),condition:document.getElementById('fCondition').value,cost:document.getElementById('fCost').value!==''?parseFloat(document.getElementById('fCost').value):null,purchaseDate:document.getElementById('fPurchaseDate').value,warrantyExpiry:document.getElementById('fWarranty').value,specs:document.getElementById('fSpecs').value.trim(),notes:document.getElementById('fNotes').value.trim(),hardware:null,createdAt:ect};var hf=['fManufacturer','fModel','fProcessor','fRAM','fGPU','fSSD','fHDD'],hp=['manufacturer','model','processor','ram','gpu','ssd','hdd'],hh=false,hw={};for(var i=0;i<hf.length;i++){var val=document.getElementById(hf[i]).value.trim();if(val){hw[hp[i]]=val;hh=true}}var mv=document.getElementById('fMAC').value.trim();if(mv){hw.macAddress=mv;hh=true}if(hh)asset.hardware=hw;if(eid){var idx=-1;for(var i=0;i<assets.length;i++)if(assets[i].id===eid){idx=i;break}if(idx!==-1)assets[idx]=asset}else{assets.unshift(asset);lastAddedId=asset.id}sA(assets);a2LN('locations',asset.location);a2LN('departments',asset.department);a2LN('employees',asset.assignedTo);for(var did in DL_MAP)if(DL_MAP.hasOwnProperty(did))a2H(did,document.getElementById(DL_MAP[did].f).value);bADL();bMDL();pFD();cM();rCV();toast(eid?t('assetUpdated'):t('assetAdded'))}
+
+// ============================================================
+//  DETAIL
+// ============================================================
+function openDetail(id){var a=null;for(var i=0;i<assets.length;i++)if(assets[i].id===id){a=assets[i];break}if(!a)return;document.getElementById('detailTitle').textContent=a.code+(a.name?' \u2014 '+a.name:'');var h='<div class="flex items-center gap-3 mb-5">'+tBg(a.type)+cBg(a.condition)+'</div>';h+='<div class="section-title">'+t('assignLoc')+'</div><div class="spec-grid mb-5">'+si(t('loc'),a.location)+si(t('dept'),a.department)+si(t('assigned'),a.assignedTo)+si(t('serialNum'),a.serial)+'</div>';h+='<div class="section-title">'+t('finStatus')+'</div><div class="spec-grid mb-5">'+si(t('purchaseCost'),fc(a.cost))+si(t('purchaseDate'),a.purchaseDate||'\u2014')+si(t('assetAge'),cAge(a.purchaseDate)||'\u2014');var wi=wInfo(a.warrantyExpiry);h+='<div class="spec-item"><div class="spec-item-label">'+t('warrantyExpiry')+'</div><div class="spec-item-value '+wi.c+'"><i class="fas '+wi.i+' mr-1"></i>'+wi.l+(a.warrantyExpiry?' <span class="text-muted text-xs">('+a.warrantyExpiry+')</span>':'')+'</div></div></div>';if(a.hardware){h+='<div class="section-title">'+t('hwSpecs')+'</div><div class="spec-grid mb-5">';var hw=a.hardware;if(hw.manufacturer)h+=si(t('manufacturer'),hw.manufacturer);if(hw.model)h+=si('Model',hw.model);if(hw.processor)h+=si(t('processor'),hw.processor);if(hw.ram)h+=si('RAM',hw.ram);if(hw.gpu)h+=si(t('gpu'),hw.gpu);if(hw.ssd)h+=si('SSD',hw.ssd);if(hw.hdd)h+=si('HDD',hw.hdd);if(hw.macAddress)h+=si('MAC',hw.macAddress);h+='</div>'}if(a.specs)h+='<div class="section-title">'+t('addSpecs')+'</div><div class="spec-item mb-5"><div class="spec-item-value">'+esc(a.specs)+'</div></div>';if(a.notes)h+='<div class="section-title">'+t('notes')+'</div><div class="spec-item mb-5"><div class="spec-item-value">'+esc(a.notes)+'</div></div>';h+='<div class="flex justify-end gap-3 pt-2 border-t border-border mt-2"><button class="btn-danger-outline" onclick="closeDetail();confirmDelAsset(\''+a.id+'\')"><i class="fas fa-trash text-xs"></i> '+t('delete')+'</button><button class="btn-primary" onclick="closeDetail();openEditModal(\''+a.id+'\')"><i class="fas fa-pen text-xs"></i> '+t('editAsset')+'</button></div>';document.getElementById('detailBody').innerHTML=h;document.getElementById('detailModal').classList.add('open');document.body.style.overflow='hidden'}
 function closeDetail(){document.getElementById('detailModal').classList.remove('open');document.body.style.overflow=''}
 
 // ============================================================
-//  CONFIRM MODAL
+//  CONFIRM
 // ============================================================
-var confirmCallback=null;
-function showConfirm(title,text,cb){document.getElementById('confirmTitle').textContent=title;document.getElementById('confirmText').textContent=text;confirmCallback=cb;document.getElementById('confirmModal').classList.add('open');document.getElementById('confirmBox').style.transform='scale(1)'}
-function closeConfirm(){document.getElementById('confirmModal').classList.remove('open');document.getElementById('confirmBox').style.transform='scale(0.95)';confirmCallback=null}
-document.getElementById('confirmDeleteBtn').addEventListener('click',function(){if(confirmCallback)confirmCallback();closeConfirm()});
-function confirmDeleteAsset(id){var asset=null;for(var i=0;i<assets.length;i++)if(assets[i].id===id){asset=assets[i];break}if(!asset)return;showConfirm('Delete Asset','Are you sure you want to delete "'+(asset.name||asset.code)+'"? This cannot be undone.',function(){deleteAsset(id)})}
-function deleteAsset(id){var n=[];for(var i=0;i<assets.length;i++)if(assets[i].id!==id)n.push(assets[i]);assets=n;saveAssets(assets);renderCurrentView();showToast('Asset deleted successfully')}
-function confirmDeleteAllAssets(){showConfirm('Delete All Assets','This will permanently delete all '+assets.length+' assets. Departments, locations, and employees lists will be kept.',function(){assets=[];saveAssets(assets);renderCurrentView();showToast('All assets deleted','info')})}
-function confirmResetData(){showConfirm('Reset All Data','This will delete everything (assets, lists, history) and restore sample data. Are you sure?',function(){resetAllData()})}
-function resetAllData(){clearAllStorage();assets=createSeedData();saveAssets(assets);syncListsFromAssets();fieldHistory=loadFieldHistory();syncHistoryFromAssets();buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();sortState={field:'createdAt',dir:'desc'};renderCurrentView();showToast('All data has been reset to defaults','info')}
-
-// ============================================================
-//  CSV EXPORT
-// ============================================================
-function exportCSV(){var data=getFilteredAssetsForExport();if(data.length===0){showToast('No assets to export','error');return}var rows=[EXPORT_HEADERS.join(',')];for(var i=0;i<data.length;i++){var a=data[i],hw=a.hardware||{},vals=[];for(var f=0;f<EXPORT_FIELDS.length;f++){var field=EXPORT_FIELDS[f];var val;if(field==='cost'){val=a.cost!=null?a.cost:''}else if(['manufacturer','model','processor','ram','gpu','ssd','hdd','macAddress'].indexOf(field)!==-1){val=hw?hw[field]||'':''}else{val=a[field]||''}vals.push(csvCell(val))}rows.push(vals.join(','))}var csv=rows.join('\n'),blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob);var link=document.createElement('a');link.href=url;link.download='assetvault_export_'+new Date().toISOString().slice(0,10)+'.csv';link.click();URL.revokeObjectURL(url);showToast('Exported '+data.length+' assets to CSV','info')}
-function getFilteredAssetsForExport(){var active=document.querySelector('.sidebar-link.active');var view=active?active.getAttribute('data-view'):'dashboard';if(view==='assets')return getFilteredAssets();return assets}
-function csvCell(val){if(val===null||val===undefined)return '';var s=String(val);if(s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1)return '"'+s.replace(/"/g,'""')+'"';return s}
+var confirmCb=null;
+function showConf(title,text,cb){document.getElementById('confirmTitle').textContent=title;document.getElementById('confirmText').textContent=text;confirmCb=cb;document.getElementById('confirmModal').classList.add('open');document.getElementById('confirmBox').style.transform='scale(1)'}
+function closeConf(){document.getElementById('confirmModal').classList.remove('open');document.getElementById('confirmBox').style.transform='scale(0.95)';confirmCb=null}
+document.getElementById('confirmDeleteBtn').addEventListener('click',function(){if(confirmCb)confirmCb();closeConf()});
+function confirmDelAsset(id){var a=null;for(var i=0;i<assets.length;i++)if(assets[i].id===id){a=assets[i];break}if(!a)return;showConf(t('delete'),t('deleteConfirm')+' "'+(a.name||a.code)+'"? '+t('cannotUndo'),function(){delAsset(id)})}
+function delAsset(id){var n=[];for(var i=0;i<assets.length;i++)if(assets[i].id!==id)n.push(assets[i]);assets=n;sA(assets);rCV();toast(t('assetDeleted'))}
+function confirmDeleteAllAssets(){showConf(t('delete'),t('deleteAllConfirm')+' '+assets.length+' '+t('assetsWord')+'. '+t('keepLists'),function(){assets=[];sA(assets);rCV();toast(t('allDeleted'),'info')})}
+function confirmResetData(){showConf(t('resetAll'),t('resetConfirm'),function(){clrAll();assets=seed();sA(assets);syncLA();fHist=lFH();syncHA();bADL();bMDL();pFD();sortS={f:'createdAt',d:'desc'};rCV();toast(t('resetDone'),'info')})}
 
 // ============================================================
-//  DOWNLOAD TEMPLATE — empty CSV with headers only
+//  CSV EXPORT / TEMPLATE / IMPORT
 // ============================================================
-function downloadTemplate(){var csv=EXPORT_HEADERS.join(',')+'\n';var blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob);var link=document.createElement('a');link.href=url;link.download='assetvault_template.csv';link.click();URL.revokeObjectURL(url);showToast('Template downloaded. Fill it and import back.','info')}
+function exportCSV(){var d=gFA();if(!d.length){toast(t('noExport'),'error');return}var rows=[EH.join(',')];for(var i=0;i<d.length;i++){var a=d[i],hw=a.hardware||{},vs=[];for(var f=0;f<EF.length;f++){var fld=EF[f],v;if(fld==='cost')v=a.cost!=null?a.cost:'';else if(['manufacturer','model','processor','ram','gpu','ssd','hdd','macAddress'].indexOf(fld)!==-1)v=hw?hw[fld]||'':'';else v=a[fld]||'';vs.push(csvC(v))}rows.push(vs.join(','))}var csv=rows.join('\n'),blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob);var lk=document.createElement('a');lk.href=url;lk.download='buna_assets_'+new Date().toISOString().slice(0,10)+'.csv';lk.click();URL.revokeObjectURL(url);toast(d.length+' '+t('exportedCount'),'info')}
+function downloadTemplate(){var csv=EH.join(',')+'\n',blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob);var lk=document.createElement('a');lk.href=url;lk.download='buna_template.csv';lk.click();URL.revokeObjectURL(url);toast(t('templateDownloaded'),'info')}
 
-// ============================================================
-//  IMPORT — file handling, parsing, preview, execution
-// ============================================================
-var importRows=[];     // parsed data rows (arrays of strings)
-var importMapping={};   // colIndex -> asset field
-var importStatus=[];    // 'new', 'skip', 'error' per row
-
-function openImportModal(){
-  document.getElementById('importModal').classList.add('open');
-  document.body.style.overflow='hidden';
-  resetImport();
-}
-function closeImportModal(){
-  document.getElementById('importModal').classList.remove('open');
-  document.body.style.overflow='';
-}
-
-function resetImport(){
-  importRows=[];importMapping={};importStatus=[];
-  document.getElementById('importStep1').style.display='block';
-  document.getElementById('importStep2').style.display='none';
-  document.getElementById('importFileInput').value='';
-}
-
-// Drag & drop
-(function(){
-  var dz=document.getElementById('importDropZone');
-  if(!dz)return;
-  dz.addEventListener('dragover',function(e){e.preventDefault();e.stopPropagation();dz.classList.add('dragover')});
-  dz.addEventListener('dragleave',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('dragover')});
-  dz.addEventListener('drop',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('dragover');if(e.dataTransfer.files.length>0)handleImportFile(e.dataTransfer.files)});
-})();
-
-function handleImportFile(files){
-  if(!files||files.length===0)return;
-  var file=files[0];
-  var ext=file.name.split('.').pop().toLowerCase();
-
-  if(ext==='csv'){
-    var reader=new FileReader();
-    reader.onload=function(e){
-      var text=e.target.result;
-      importRows=parseCSV(text);
-      if(importRows.length<2){showToast('File is empty or has no data rows','error');return}
-      processImportData(file.name,importRows.length-1);
-    };
-    reader.readAsText(file);
-  } else if(ext==='xlsx'||ext==='xls'){
-    var reader=new FileReader();
-    reader.onload=function(e){
-      try{
-        var data=new Uint8Array(e.target.result);
-        var workbook=XLSX.read(data,{type:'array'});
-        var firstSheet=workbook.SheetNames[0];
-        var sheet=workbook.Sheets[firstSheet];
-        importRows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
-        // Filter out completely empty rows
-        var cleaned=[];
-        for(var i=0;i<importRows.length;i++){
-          var rowEmpty=true;
-          for(var j=0;j<importRows[i].length;j++){if(String(importRows[i][j]).trim()){rowEmpty=false;break}}
-          if(!rowEmpty)cleaned.push(importRows[i]);
-        }
-        importRows=cleaned;
-        if(importRows.length<2){showToast('File is empty or has no data rows','error');return}
-        processImportData(file.name,importRows.length-1);
-      }catch(err){showToast('Failed to read Excel file: '+err.message,'error')}
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    showToast('Unsupported file type. Use .csv, .xlsx, or .xls','error');
-  }
-}
-
-function parseCSV(text){
-  var rows=[],current='',inQuotes=false,row=[];
-  for(var i=0;i<text.length;i++){
-    var c=text[i];
-    if(inQuotes){if(c==='"'){if(i+1<text.length&&text[i+1]==='"'){current+='"';i++}else inQuotes=false}else current+=c}
-    else{if(c==='"')inQuotes=true;else if(c===','){row.push(current.trim());current=''}else if(c==='\n'||(c==='\r'&&text[i+1]==='\n')){row.push(current.trim());current='';if(row.some(function(c){return c!==''}))rows.push(row);row=[];if(c==='\r')i++}else current+=c}
-  }
-  row.push(current.trim());if(row.some(function(c){return c!==''}))rows.push(row);
-  return rows;
-}
-
-function processImportData(fileName,dataRowCount){
-  var headers=importRows[0];
-  // Auto-map columns
-  importMapping={};
-  var mappedCount=0;
-  for(var i=0;i<headers.length;i++){
-    var h=String(headers[i]).toLowerCase().trim();
-    if(HEADER_MAP.hasOwnProperty(h)){importMapping[i]=HEADER_MAP[h];mappedCount++}
-  }
-
-  // Classify each data row
-  var skipCode=document.getElementById('importSkipCode').checked;
-  var skipSerial=document.getElementById('importSkipSerial').checked;
-  importStatus=[];
-  var newCount=0,skipCount=0,errorCount=0;
-
-  for(var r=1;r<importRows.length;r++){
-    var row=importRows[r];
-    var status='new';
-
-    // Check for skip conditions
-    if(skipCode){
-      var codeVal='';for(var ci in importMapping){if(importMapping[ci]==='code'){codeVal=String(row[ci]||'').trim();break}}
-      if(!codeVal){status='error';errorCount++}
-      else{for(var a=0;a<assets.length;a++){if(assets[a].code&&assets[a].code.toLowerCase()===codeVal.toLowerCase()){status='skip';skipCount++;break}}}
-    }
-    if(status==='new'&&skipSerial){
-      var serialVal='';for(var ci in importMapping){if(importMapping[ci]==='serial'){serialVal=String(row[ci]||'').trim();break}}
-      if(serialVal){for(var a=0;a<assets.length;a++){if(assets[a].serial&&assets[a].serial.toLowerCase()===serialVal.toLowerCase()){status='skip';skipCount++;break}}}
-    }
-    if(status==='new')newCount++;
-    importStatus.push(status);
-  }
-
-  // Show step 2
-  document.getElementById('importStep1').style.display='none';
-  document.getElementById('importStep2').style.display='block';
-  document.getElementById('importFileInfo').innerHTML='<i class="fas fa-file-alt mr-1"></i> <strong>'+esc(fileName)+'</strong> \u2014 '+dataRowCount+' data row'+(dataRowCount!==1?'s':'')+' found';
-
-  // Mapping info
-  var mapInfo='';for(var ci in importMapping){if(importMapping.hasOwnProperty(ci)){mapInfo+='<span class="import-badge import-badge-new" style="margin-right:6px;margin-bottom:4px;display:inline-block">'+esc(headers[ci])+' <i class="fas fa-arrow-right mx-1" style="font-size:8px;opacity:.5"></i> '+importMapping[ci]+'</span>'}}
-  document.getElementById('importMappingInfo').innerHTML=mapInfo?'<i class="fas fa-link mr-1"></i> Detected column mappings: '+mapInfo:'<span style="color:#ef4444"><i class="fas fa-exclamation-triangle mr-1"></i> No recognized column headers found. Make sure your file has headers like: '+EXPORT_HEADERS.slice(0,6).join(', ')+'...</span>';
-
-  // Summary
-  document.getElementById('importSummary').innerHTML=
-    '<span class="import-badge import-badge-new"><i class="fas fa-plus mr-1"></i>'+newCount+' New</span>'+
-    (skipCount?'<span class="import-badge import-badge-skip"><i class="fas fa-forward mr-1"></i>'+skipCount+' Skipped (duplicate)</span>':'')+
-    (errorCount?'<span class="import-badge import-badge-error"><i class="fas fa-exclamation-circle mr-1"></i>'+errorCount+' Error (no code)</span>':'');
-
-  document.getElementById('importCountBtn').textContent=newCount;
-  document.getElementById('importConfirmBtn').disabled=newCount===0;
-  if(newCount===0)document.getElementById('importConfirmBtn').style.opacity='.4';
-  else document.getElementById('importConfirmBtn').style.opacity='1';
-
-  // Preview table (show first 50 rows)
-  renderImportPreview(headers);
-}
-
-function renderImportPreview(headers){
-  var maxPreview=Math.min(importRows.length,51); // header + 50 rows
-  var html='<table class="import-preview-table"><thead><tr>';
-  html+='<th style="width:60px">#</th><th style="width:80px">Status</th>';
-  // Show mapped columns first, then unmapped
-  var shownCols=[];
-  for(var ci in importMapping)if(importMapping.hasOwnProperty(ci))shownCols.push(parseInt(ci));
-  for(var i=0;i<headers.length;i++)if(shownCols.indexOf(i)===-1)shownCols.push(i);
-  for(var s=0;s<shownCols.length;s++){
-    var ci=shownCols[s];
-    var isMapped=importMapping.hasOwnProperty(ci);
-    html+='<th'+(isMapped?'':' style="opacity:.4"')+'>'+esc(headers[ci]||('Col '+(ci+1)))+(isMapped?' <i class="fas fa-check-circle text-success" style="font-size:9px"></i>':'')+'</th>';
-  }
-  html+='</tr></thead><tbody>';
-
-  for(var r=1;r<maxPreview;r++){
-    var row=importRows[r]||[];
-    var status=importStatus[r-1]||'new';
-    var rowCls=status==='skip'?'row-skip':status==='error'?'row-skip':'row-new';
-    html+='<tr class="'+rowCls+'">';
-    html+='<td class="text-muted">'+r+'</td>';
-    if(status==='new')html+='<td><span class="import-badge import-badge-new">New</span></td>';
-    else if(status==='skip')html+='<td><span class="import-badge import-badge-skip">Skip</span></td>';
-    else html+='<td><span class="import-badge import-badge-error">Error</span></td>';
-    for(var s=0;s<shownCols.length;s++){
-      var ci=shownCols[s];
-      html+='<td title="'+esc(String(row[ci]||''))+'">'+esc(String(row[ci]||''))+'</td>';
-    }
-    html+='</tr>';
-  }
-  if(importRows.length>51)html+='<tr><td colspan="'+(shownCols.length+2)+'" class="text-center text-muted" style="padding:10px">... and '+(importRows.length-51)+' more rows</td></tr>';
-  html+='</tbody></table>';
-  document.getElementById('importPreviewWrap').innerHTML=html;
-}
-
-function executeImport(){
-  var hwFields=['manufacturer','model','processor','ram','gpu','ssd','hdd','macAddress'];
-  var addedCount=0;
-  for(var r=1;r<importRows.length;r++){
-    if(importStatus[r-1]!=='new')continue;
-    var row=importRows[r];
-    var asset={id:genId(),hardware:null,createdAt:Date.now()};
-    var hw={},hasHw=false;
-    for(var ci in importMapping){
-      if(!importMapping.hasOwnProperty(ci))continue;
-      var field=importMapping[ci];
-      var value=String(row[ci]||'').trim();
-      if(!value)continue;
-      if(hwFields.indexOf(field)!==-1){hw[field]=value;hasHw=true}
-      else if(field==='cost'){var num=parseFloat(value.replace(/[$,\s]/g,''));if(!isNaN(num))asset.cost=num}
-      else{asset[field]=value}
-    }
-    if(hasHw)asset.hardware=hw;
-    if(!asset.code)continue; // skip rows without code
-    assets.push(asset);
-    addedCount++;
-    // Update managed lists
-    addToListIfNew('locations',asset.location);
-    addToListIfNew('departments',asset.department);
-    addToListIfNew('employees',asset.assignedTo);
-    // Update field history
-    for(var dlId in DL_MAP){
-      if(!DL_MAP.hasOwnProperty(dlId))continue;
-      var f=DL_MAP[dlId].field,hp=DL_MAP[dlId].hwProp;
-      var val='';
-      if(hp)val=hw[hp]||'';
-      else val=asset[f]||'';
-      if(val)addToHistory(dlId,val);
-    }
-  }
-  saveAssets(assets);
-  buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();
-  closeImportModal();renderCurrentView();
-  showToast('Successfully imported '+addedCount+' assets');
-}
-
-// Re-calculate import status when checkboxes change
-document.getElementById('importSkipCode').addEventListener('change',function(){if(importRows.length>1)processImportData(document.getElementById('importFileInfo').textContent.split('\u2014')[1].trim().split(' ')[0].replace(/[^0-9]/g,''),importRows.length-1)});
-document.getElementById('importSkipSerial').addEventListener('change',function(){if(importRows.length>1)processImportData(document.getElementById('importFileInfo').textContent.split('\u2014')[1].trim().split(' ')[0].replace(/[^0-9]/g,''),importRows.length-1)});
+// Asset import
+var impRows=[],impMap={},impStatus=[];
+function openImportModal(){document.getElementById('importModal').classList.add('open');document.body.style.overflow='hidden';resetImport()}
+function closeImportModal(){document.getElementById('importModal').classList.remove('open');document.body.style.overflow=''}
+function resetImport(){impRows=[];impMap={};impStatus=[];document.getElementById('importStep1').style.display='block';document.getElementById('importStep2').style.display='none';document.getElementById('importFileInput').value=''}
+(function(){var dz=document.getElementById('importDropZone');if(!dz)return;dz.addEventListener('dragover',function(e){e.preventDefault();e.stopPropagation();dz.classList.add('dragover')});dz.addEventListener('dragleave',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('dragover')});dz.addEventListener('drop',function(e){e.preventDefault();e.stopPropagation();dz.classList.remove('dragover');if(e.dataTransfer.files.length)handleImportFile(e.dataTransfer.files)})})();
+function handleImportFile(files){if(!files||!files.length)return;var f=files[0],ext=f.name.split('.').pop().toLowerCase();if(ext==='csv'){var r=new FileReader();r.onload=function(e){impRows=pCSV(e.target.result);if(impRows.length<2){toast(t('fileEmpty'),'error');return}processImportData(f.name)};r.readAsText(f)}else if(ext==='xlsx'||ext==='xls'){var r=new FileReader();r.onload=function(e){try{var d=new Uint8Array(e.target.result),wb=XLSX.read(d,{type:'array'}),s=wb.Sheets[wb.SheetNames[0]];impRows=XLSX.utils.sheet_to_json(s,{header:1,defval:''}).filter(function(r){return r.some(function(c){return String(c).trim()})});if(impRows.length<2){toast(t('fileEmpty'),'error');return}processImportData(f.name)}catch(err){toast(t('readFailed')+': '+err.message,'error')}};r.readAsArrayBuffer(f)}else{toast(t('unsupported'),'error')}}
+function pCSV(text){var rows=[],cur='',iq=false,row=[];for(var i=0;i<text.length;i++){var c=text[i];if(iq){if(c==='"'){if(i+1<text.length&&text[i+1]==='"'){cur+='"';i++}else iq=false}else cur+=c}else{if(c==='"')iq=true;else if(c===','){row.push(cur.trim());cur=''}else if(c==='\n'||(c==='\r'&&text[i+1]==='\n')){row.push(cur.trim());cur='';if(row.some(function(c){return c!==''}))rows.push(row);row=[];if(c==='\r')i++}else cur+=c}}row.push(cur.trim());if(row.some(function(c){return c!==''}))rows.push(row);return rows}
+function processImportData(fn){var headers=impRows[0];impMap={};var mc=0;for(var i=0;i<headers.length;i++){var h=String(headers[i]).toLowerCase().trim();if(HMAP.hasOwnProperty(h)){impMap[i]=HMAP[h];mc++}}var skC=document.getElementById('importSkipCode').checked,skS=document.getElementById('importSkipSerial').checked;impStatus=[];var nc=0,sc=0,ec=0;for(var r=1;r<impRows.length;r++){var row=impRows[r],st='new';if(skC){var cv='';for(var ci in impMap){if(impMap[ci]==='code'){cv=String(row[ci]||'').trim();break}}if(!cv){st='error';ec++}else{for(var a=0;a<assets.length;a++){if(assets[a].code&&assets[a].code.toLowerCase()===cv.toLowerCase()){st='skip';sc++;break}}}}if(st==='new'&&skS){var sv='';for(var ci in impMap){if(impMap[ci]==='serial'){sv=String(row[ci]||'').trim();break}}if(sv){for(var a=0;a<assets.length;a++){if(assets[a].serial&&assets[a].serial.toLowerCase()===sv.toLowerCase()){st='skip';sc++;break}}}}if(st==='new')nc++;impStatus.push(st)}document.getElementById('importStep1').style.display='none';document.getElementById('importStep2').style.display='block';document.getElementById('importFileInfo').innerHTML='<i class="fas fa-file-alt mr-1"></i> <strong>'+esc(fn)+'</strong> \u2014 '+(impRows.length-1)+' rows';var mi='';for(var ci in impMap)if(impMap.hasOwnProperty(ci))mi+='<span class="import-badge import-badge-new" style="margin:2px 4px 2px 0;display:inline-block">'+esc(headers[ci])+' \u2192 '+impMap[ci]+'</span>';document.getElementById('importMappingInfo').innerHTML=mi?'<i class="fas fa-link mr-1"></i> '+t('detectedCols')+': '+mi:'<span style="color:#ef4444"><i class="fas fa-exclamation-triangle mr-1"></i>'+t('noHeaders')+' '+EH.slice(0,5).join(', ')+'...</span>';document.getElementById('importSummary').innerHTML='<span class="import-badge import-badge-new"><i class="fas fa-plus mr-1"></i>'+nc+' '+t('newCount')+'</span>'+(sc?'<span class="import-badge import-badge-skip"><i class="fas fa-forward mr-1"></i>'+sc+' '+t('skipCount')+'</span>':'')+(ec?'<span class="import-badge import-badge-error"><i class="fas fa-exclamation-circle mr-1"></i>'+ec+' '+t('errorCount')+'</span>':'');document.getElementById('importCountBtn').textContent=nc;document.getElementById('importConfirmBtn').disabled=!nc;document.getElementById('importConfirmBtn').style.opacity=nc?1:.4;var mx=Math.min(impRows.length,51),sc2=['code','type','name','serial','location','department','assignedTo','condition','cost'];var ph='<table class="import-preview-table"><thead><tr><th>#</th><th>'+t('status')+'</th>';for(var s=0;s<sc2.length;s++){var ci2=-1;for(var ci in impMap)if(impMap[ci]===sc2[s]){ci2=parseInt(ci);break}ph+='<th'+(ci2>=0?'':' style="opacity:.4"')+'>'+(ci2>=0?esc(headers[ci2]):sc2[s])+'</th>'}ph+='</tr></thead><tbody>';for(var r=1;r<mx;r++){var row=impRows[r]||[],st=impStatus[r-1]||'new';ph+='<tr class="'+(st==='skip'?'row-skip':st==='error'?'row-skip':'row-new')+'"><td>'+(r)+'</td><td>'+(st==='new'?'<span class="import-badge import-badge-new">'+t('new')+'</span>':st==='skip'?'<span class="import-badge import-badge-skip">'+t('skip')+'</span>':'<span class="import-badge import-badge-error">'+t('error')+'</span>')+'</td>';for(var s=0;s<sc2.length;s++){var ci2=-1;for(var ci in impMap)if(impMap[ci]===sc2[s]){ci2=parseInt(ci);break}ph+='<td>'+esc(ci2>=0?String(row[ci2]||''):'')+'</td>'}ph+='</tr>'}if(impRows.length>51)ph+='<tr><td colspan="'+(sc2.length+2)+'" class="text-center text-muted" style="padding:10px">...</td></tr>';ph+='</tbody></table>';document.getElementById('importPreviewWrap').innerHTML=ph}
+function executeImport(){var hwF=['manufacturer','model','processor','ram','gpu','ssd','hdd','macAddress'],ac2=0;for(var r=1;r<impRows.length;r++){if(impStatus[r-1]!=='new')continue;var row=impRows[r],asset={id:gid(),hardware:null,createdAt:Date.now()},hw={},hh=false;for(var ci in impMap){if(!impMap.hasOwnProperty(ci))continue;var fld=impMap[ci],val=String(row[ci]||'').trim();if(!val)continue;if(hwF.indexOf(fld)!==-1){hw[fld]=val;hh=true}else if(fld==='cost'){var num=parseFloat(val.replace(/[$,\s]/g,''));if(!isNaN(num))asset.cost=num}else{asset[fld]=val}}if(hh)asset.hardware=hw;if(!asset.code)continue;assets.push(asset);ac2++;a2LN('locations',asset.location);a2LN('departments',asset.department);a2LN('employees',asset.assignedTo);for(var did in DL_MAP)if(DL_MAP.hasOwnProperty(did)){var f=DL_MAP[did].f,hp=DL_MAP[did].h;var val='';if(hp)val=hw[hp]||'';else val=asset[f]||'';if(val)a2H(did,val)}}sA(assets);bADL();bMDL();pFD();closeImportModal();rCV();toast(ac2+' '+t('empImported'))}
+document.getElementById('importSkipCode').addEventListener('change',function(){if(impRows.length>1)processImportData('')});
+document.getElementById('importSkipSerial').addEventListener('change',function(){if(impRows.length>1)processImportData('')});
 
 // ============================================================
-//  SIDEBAR TOGGLE & KEYBOARD
+//  SIDEBAR / KEYBOARD
 // ============================================================
 document.getElementById('sidebarToggle').addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('open')});
-document.addEventListener('click',function(e){if(window.innerWidth<=1024){var s=document.getElementById('sidebar'),t=document.getElementById('sidebarToggle');if(s.classList.contains('open')&&!s.contains(e.target)&&!t.contains(e.target))s.classList.remove('open')}});
-document.getElementById('assetModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('click',function(e){if(window.innerWidth<=1024){var s=document.getElementById('sidebar'),t2=document.getElementById('sidebarToggle');if(s.classList.contains('open')&&!s.contains(e.target)&&!t2.contains(e.target))s.classList.remove('open')}});
+document.getElementById('assetModal').addEventListener('click',function(e){if(e.target===this)cM()});
 document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetail()});
 document.getElementById('importModal').addEventListener('click',function(e){if(e.target===this)closeImportModal()});
-document.getElementById('confirmModal').addEventListener('click',function(e){if(e.target===this)closeConfirm()});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('confirmModal').classList.contains('open'))closeConfirm();else if(document.getElementById('importModal').classList.contains('open'))closeImportModal();else if(document.getElementById('detailModal').classList.contains('open'))closeDetail();else if(document.getElementById('assetModal').classList.contains('open'))closeModal()}});
+document.getElementById('empImportModal').addEventListener('click',function(e){if(e.target===this)closeEmpImportModal()});
+document.getElementById('confirmModal').addEventListener('click',function(e){if(e.target===this)closeConf()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('confirmModal').classList.contains('open'))closeConf();else if(document.getElementById('empImportModal').classList.contains('open'))closeEmpImportModal();else if(document.getElementById('importModal').classList.contains('open'))closeImportModal();else if(document.getElementById('detailModal').classList.contains('open'))closeDetail();else if(document.getElementById('assetModal').classList.contains('open'))cM()}});
 
 // ============================================================
 //  INIT
 // ============================================================
-(function(){buildAllDatalists();buildManagedDatalists();populateFilterDropdowns();renderDashboard()})();
+(function(){bADL();bMDL();pFD();rDash()})();
 </script>
 </body>
 </html>
